@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/css/layui.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="icon" href="/favicon.ico">
+    <title>管理后台</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://malsup.github.io/jquery.form.js"></script>
+    <script type="text/javascript">
+        //ajax 方式上传文件操作
+        $(document).ready(function(){
+            $('#login').click(function(){
+                if(checkData()){
+                    $('#loging_form').ajaxSubmit({
+                        url:'/admin/login',
+                        dataType: 'json',
+                        success: function resutlMsg(msg){
+
+                            if (msg.code == 200){
+                                //window.location.href='http://www.mchomes.cn:8081/service/home';
+                                window.location.href='http://localhost:8080/service/home';
+                            } else {
+                                alert(msg.msg);
+                            }
+                            $("#upfile").val("");
+                        },
+                        error: function errorMsg(){
+                            alert("出错！");
+                        }
+                    });
+                }
+            });
+        });
+
+        //JS校验form表单信息
+        function checkData(){
+            var username = $("#username").val();
+            var password = $("#password").val();
+            if("" == username){
+                alert("请输入账号");
+                return false;
+            }
+            if("" == password){
+                alert("请输入密码");
+                return false;
+            }
+            return true;
+        }
+
+    </script>
+</head>
+<body class="login-wrap">
+    <div class="login-container" >
+        <form class="login-form" method="GET" id="loging_form" enctype="multipart/form-data">
+            <div class="input-group">
+                <input placeholder="用户名" id="username" name="username" class="input-field">
+                <!--<label for="username" class="input-label">
+                    <span class="label-title">用户名</span>
+                </label>-->
+            </div>
+            <div class="input-group">
+                <input type="password" placeholder="密码" id="password" name="password" class="input-field">
+                <!--<label for="password" class="input-label">
+                    <span class="label-title">密码</span>
+                </label>-->
+            </div>
+            <button type="button" id="login" name="login" class="login-button">登录<i class="ai ai-enter"></i></button>
+        </form>
+    </div>
+</body>
+<script src="/js/layui.js"></script>
+<script src="/js/index.js"></script>
+</html>

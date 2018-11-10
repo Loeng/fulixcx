@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>任务分配</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://malsup.github.io/jquery.form.js"></script>
+    <script type="text/javascript">
+        //ajax 方式上传文件操作
+        $(document).ready(function(){
+            $('#btn').click(function(){
+                if(checkData()){
+                    $('#form1').ajaxSubmit({
+                        url:'/admin/disTask',
+                        dataType: 'text',
+                        success: function resutlMsg(msg){
+                            alert(msg);
+                            $("#upfile").val("");
+                        },
+                        error: function errorMsg(){
+                            alert("出错！");
+                        }
+                    });
+                }
+            });
+        });
+
+        //JS校验form表单信息
+        function checkData(){
+            var fileDir = $("#distr_number").val();
+            if("" == fileDir){
+                alert("请输入分配数量");
+                return false;
+            }
+            return true;
+        }
+
+    </script>
+</head>
+<body>
+    <p>当前可分配资源 <label th:text="${num}"></label></p>
+    <form method="GET" id="form1" enctype="multipart/form-data">
+        <p>任务名称<input id="name" name="name"></p>
+        <p>备注<input id="remarks" name="remarks"></p>
+        <p>分配员工</p>
+    <select name="staff">
+        <option th:each="staff : ${staffs}" th:value="${staff.id}" th:text="${staff.staffName}"></option>
+    </select>
+    <p>分配数量</p>
+    <input id="distr_number" name="distr_number">
+        <input type="button" id="btn" name="btn" value="提交">
+    </form>
+</body>
+</html>

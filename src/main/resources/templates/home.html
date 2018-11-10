@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户列表</title>
+    <style>
+        td{
+            border-bottom: 1px solid #5d6779
+        }
+        th{
+            border-bottom: 1px solid #5d6779
+        }
+    </style>
+</head>
+<body>
+<table style="width: 100%" cellspacing="0">
+    <tr style="width: 100%">
+        <th>id</th>
+        <th>姓名</th>
+        <th>号码</th>
+        <th>备注</th>
+        <th>归属地</th>
+        <th>运营商</th>
+        <th>是否分配</th>
+        <th>上传人</th>
+        <th>修改时间</th>
+    </tr>
+    <tr style="text-align: center;height: 46px" th:each="phone : ${ComPhone}">
+        <td  th:text="${phone.id}"></td>
+        <td  th:text="${phone.phone_name}"></td>
+        <td  th:text="${phone.phone_number}"></td>
+        <td  th:text="${phone.remarks}"></td>
+        <td  th:text="${phone.carrieroperator}"></td>
+        <td  th:text="${phone.attribution}"></td>
+        <td  th:text="${phone.task_id} == 0?'否':'是'"></td>
+        <td  th:text="${phone.staff_name}"></td>
+        <td  th:text="${phone.up_time}"></td>
+
+    </tr>
+
+</table>
+</body>
+</html>
