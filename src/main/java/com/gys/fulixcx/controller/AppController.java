@@ -106,8 +106,12 @@ public class AppController {
         if (cpmode !=null){
             cpmode.setStar(star);
             cpmode.setSchedule(schedule);
-            cpmode.setPhoneName(phone_name);
-            cpmode.setRemarks(remarks);
+            if (phone_name!=null) {
+                cpmode.setPhoneName(phone_name);
+            }
+            /*if (remarks!=null) {
+                cpmode.setRemarks(remarks);
+            }*/
             CallCompanyPhoneMode save = callCompanyPhoneDao.save(cpmode);
             CallTaskCallHistoryMode byStaffCallId = callTaskHistoryDao.findByStaffCallId(save.getId());
             if (byStaffCallId==null){
@@ -255,7 +259,7 @@ public class AppController {
             mode.setStar(star);
             mode.setSchedule(schedule);
             mode.setName(name);
-            mode.setRemarks(remarks);
+            //mode.setRemarks(remarks);
             CallStaffCallMode save = callStaffCallDao.save(mode);
             CallStaffCallHistoryMode byStaffCallId = callStaffHistoryDao.findByStaffCallId(save.getId());
             byStaffCallId.setRemarks(save.getRemarks());

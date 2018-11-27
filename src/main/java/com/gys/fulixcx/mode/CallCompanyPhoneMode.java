@@ -19,6 +19,7 @@ public class CallCompanyPhoneMode {
     private Integer converseTime;
     private String phoneName;
     private Integer taskId;
+    private String companyName;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -107,7 +108,15 @@ public class CallCompanyPhoneMode {
     public void setCompanyId(Integer companyId) {
         this.companyId = companyId;
     }
+    @Basic
+    @Column(name = "company_name")
+    public String getCompanyName() {
+        return companyName;
+    }
 
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
     @Basic
     @Column(name = "phone_id")
     public Integer getPhoneId() {
