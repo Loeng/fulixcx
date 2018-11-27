@@ -29,4 +29,10 @@ public interface CallTaskHistoryDao extends CrudRepository<CallTaskCallHistoryMo
             "FROM (SELECT h.* FROM call_company_phone p,call_task_call_history h WHERE" +
             " p.id = h.task_phone_id and p.company_id = 1) a GROUP BY days DESC LIMIT 7) b GROUP BY days")
     List<Map<String,String>> findSumList(int comId);
+    @Query(nativeQuery = true,value = "SELECT COUNT(*) dialnum,ifnull(sum(converse_time),0) allDate,ifnull(COUNT(case when converse_time>0 then 1 ELSE 0 end),0) effective," +
+            "ifnull(SUM(converse_time)/ ifnull(COUNT(case when converse_time>0 then 1 ELSE 0 end),1),0) averagetime" +
+            " FROM(SELECT c.* FROM call_task a,call_company_phone b,call_task_call_history c WHERE" +
+            " a.staff_id = ?1 and b.task_id = a.id and c.task_phone_id = b.id and c.dial_time > ?2 AND" +
+            " c.dial_time < ?3 ORDER BY c.dial_time) d;")
+    Map<String,String> findTongji(int staffId,String starttime,String endtime);
 }

@@ -5,10 +5,7 @@ import com.aliyuncs.dyplsapi.model.v20170525.BindAxbResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.gys.fulixcx.dao.*;
 import com.gys.fulixcx.mode.*;
-import com.gys.fulixcx.util.JsonReq;
-import com.gys.fulixcx.util.MD5Util;
-import com.gys.fulixcx.util.SecretDemo;
-import com.gys.fulixcx.util.UrlReqUtil;
+import com.gys.fulixcx.util.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -262,7 +259,7 @@ public class AppController {
             //mode.setRemarks(remarks);
             CallStaffCallMode save = callStaffCallDao.save(mode);
             CallStaffCallHistoryMode byStaffCallId = callStaffHistoryDao.findByStaffCallId(save.getId());
-            byStaffCallId.setRemarks(save.getRemarks());
+            byStaffCallId.setRemarks(remarks);
             byStaffCallId.setSchedule(save.getSchedule());
             byStaffCallId.setStar(save.getStar());
             callStaffHistoryDao.save(byStaffCallId);
@@ -283,6 +280,25 @@ public class AppController {
     @GetMapping("/getStaff")
     public JsonReq getStaff(int comid,int staffid){
         return null;
+    }
+    @GetMapping("/getTongji")
+    public JsonReq getTongji(int staffId){
+        Map<String,String> map1 = callTaskHistoryDao.findTongji(staffId,DateUtil.getMidnight(),new Date().getTime()+"");
+        Map<String,String> map2 = callTaskHistoryDao.findTongji(staffId,DateUtil.getYesterday(),DateUtil.getMidnight());
+        Map<String,String> map3 = callTaskHistoryDao.findTongji(staffId,(Long.parseLong(DateUtil.getYesterday())-24*60*60*1000)+"",DateUtil.getYesterday());
+        Map<String,String> map4 = callTaskHistoryDao.findTongji(staffId,DateUtil.getWeek(),new Date().getTime()+"");
+        Map<String,String> map5 = callTaskHistoryDao.findTongji(staffId,(Long.parseLong(DateUtil.getWeek())-7*24*60*60*1000)+"",DateUtil.getWeek());
+        Map<String,String> map6 = callTaskHistoryDao.findTongji(staffId,DateUtil.getMonth(),new Date().getTime()+"");
+        Map<String,String> map7 = callTaskHistoryDao.findTongji(staffId,(Long.parseLong(DateUtil.getMonth())-30*24*60*60*1000)+"",DateUtil.getMonth());
+        List<Map<String,String>> maps = new ArrayList<Map<String, String>>();
+        maps.add(map1);
+        maps.add(map2);
+        maps.add(map3);
+        maps.add(map4);
+        maps.add(map5);
+        maps.add(map6);
+        maps.add(map7);
+        return new JsonReq(maps);
     }
 
     /*@GetMapping("/callTial")//电话通知
