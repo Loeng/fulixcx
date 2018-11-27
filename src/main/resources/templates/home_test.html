@@ -47,14 +47,42 @@
 <body>
 <div style="text-align: center">
 <form method="POST"  enctype="multipart/form-data" id="form1" action="../uploadExcel/upload.do">
-    <table>
+    <table style="text-align: left">
         <tr>
             <td>上传文件: </td>
-            <td> <input id="upfile" type="file" name="upfile"></td>
         </tr>
         <tr>
-            <td><input name="company_id" value="1"></td>
-            <td><input type="button" value="ajax方式提交" id="btn" name="btn" ></td>
+            <td> <input id="upfile" type="file" name="upfile"><br><br></td>
+        </tr>
+        <tr>
+            <td>是否与他人共享该数据：<select name="sharing">
+                <option value="0">是</option>
+                <option value="1">否</option>
+            </select><br><br></td>
+        </tr>
+        <tr>
+            <td><label>共享规则：</label>
+            </td>
+        </tr>
+        <tr>
+            <td><label>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                当您上传数据时同意共享，您的数据将被提供他人使用，<br>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                同时您也将获得使用他人数据的资格。假设您上传100条<br>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                数据，有效数据为99条并同意共享，您将获得99条他人<br>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                数据的使用权</label><br><br></td>
+        </tr>
+        <tr>
+            <td>数据模板</td>
+        </tr>
+        <tr>
+            <td><img src="http://www.mchomes.cn:8081/images/moban.png"></td>
+        </tr>
+        <tr>
+            <td><input type="button" value="提交" id="btn" name="btn" ></td>
         </tr>
     </table>
 </form>

@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="../css/layui.css">
     <link rel="stylesheet" href="../css/view.css"/>
+    <script src="../js/Chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://malsup.github.io/jquery.form.js"></script>
     <title></title>
 </head>
 <body class="layui-view-body">
@@ -14,40 +17,44 @@
                 <div class="layui-card">
                     <table style="width: 100%">
                         <tr style="height: 40px;background: #01AAED;width: 100%">
-                            <td colspan="4"style="padding-left: 20px">今日统计</td>
+                            <td colspan="5"style="padding-left: 20px">今日统计</td>
                         </tr>
                         <tr style="text-align: center;height: 40px">
-                            <td>拨打总数<label style="margin-left: 10px" th:text="${sum0.dialall}"></label></td>
+                            <td>拨打总数<label style="margin-left: 10px" th:text="${sum0.total}"></label></td>
                             <td>有效数量<label style="margin-left: 10px" th:text="${sum0.effective}"></label></td>
-                            <td>总通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum0.alltime/60,1,0)}+'分'+${#numbers.formatDecimal(sum0.alltime%60,1,0)}+'秒'"></label></td>
-                            <td>平均通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum0.a,1,0)}"></label>秒</td>
+                            <td>无效数量<label style="margin-left: 10px" th:text="${sum0.invalid}"></label></td>
+                            <td>总通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum0.totaltime/60,1,0)}+'分'+${#numbers.formatDecimal(sum0.totaltime%60,1,0)}+'秒'"></label></td>
+                            <td>平均通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum0.averagetime,1,0)}"></label>秒</td>
                         </tr>
                         <tr style="height: 40px;background: #01AAED;width: 100%">
-                            <td colspan="4"style="padding-left: 20px">昨日统计</td>
+                            <td colspan="5"style="padding-left: 20px">昨日统计</td>
                         </tr>
                         <tr style="text-align: center;height: 40px">
-                            <td>拨打总数<label style="margin-left: 10px" th:text="${sum1.dialall}"></label></td>
+                            <td>拨打总数<label style="margin-left: 10px" th:text="${sum1.total}"></label></td>
                             <td>有效数量<label style="margin-left: 10px" th:text="${sum1.effective}"></label></td>
-                            <td>总通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum1.alltime/60,1,0)}+'分'+${#numbers.formatDecimal(sum1.alltime%60,1,0)}+'秒'"></label></td>
-                            <td>平均通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum1.a,1,0)}"></label>秒</td>
+                            <td>无效数量<label style="margin-left: 10px" th:text="${sum1.invalid}"></label></td>
+                            <td>总通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum1.totaltime/60,1,0)}+'分'+${#numbers.formatDecimal(sum1.totaltime%60,1,0)}+'秒'"></label></td>
+                            <td>平均通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum1.averagetime,1,0)}"></label>秒</td>
                         </tr>
                         <tr style="height: 40px;background: #01AAED;width: 100%">
-                            <td colspan="4"style="padding-left: 20px">本周统计</td>
+                            <td colspan="5"style="padding-left: 20px">本周统计</td>
                         </tr>
                         <tr style="text-align: center;height: 40px">
-                            <td>拨打总数<label style="margin-left: 10px" th:text="${sum2.dialall}"></label></td>
+                            <td>拨打总数<label style="margin-left: 10px" th:text="${sum2.total}"></label></td>
                             <td>有效数量<label style="margin-left: 10px" th:text="${sum2.effective}"></label></td>
-                            <td>总通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum2.alltime/60,1,0)}+'分'+${#numbers.formatDecimal(sum2.alltime%60,1,0)}+'秒'"></label></td>
-                            <td>平均通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum2.a,1,0)}"></label>秒</td>
+                            <td>无效数量<label style="margin-left: 10px" th:text="${sum2.invalid}"></label></td>
+                            <td>总通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum2.totaltime/60,1,0)}+'分'+${#numbers.formatDecimal(sum2.totaltime%60,1,0)}+'秒'"></label></td>
+                            <td>平均通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum2.averagetime,1,0)}"></label>秒</td>
                         </tr>
                         <tr style="height: 40px;background: #01AAED;width: 100%">
-                            <td colspan="4"style="padding-left: 20px">本月统计</td>
+                            <td colspan="5"style="padding-left: 20px">本月统计</td>
                         </tr>
                         <tr style="text-align: center;height: 40px">
-                            <td>拨打总数<label style="margin-left: 10px" th:text="${sum3.dialall}"></label></td>
+                            <td>拨打总数<label style="margin-left: 10px" th:text="${sum3.total}"></label></td>
                             <td>有效数量<label style="margin-left: 10px" th:text="${sum3.effective}"></label></td>
-                            <td>总通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum3.alltime/60,1,0)}+'分'+${#numbers.formatDecimal(sum3.alltime%60,1,0)}+'秒'"></label></td>
-                            <td>平均通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum3.a,1,0)}"></label>秒</td>
+                            <td>无效数量<label style="margin-left: 10px" th:text="${sum3.invalid}"></label></td>
+                            <td>总通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum3.totaltime/60,1,0)}+'分'+${#numbers.formatDecimal(sum3.totaltime%60,1,0)}+'秒'"></label></td>
+                            <td>平均通话时长<label style="margin-left: 10px" th:text="${#numbers.formatDecimal(sum3.averagetime,1,0)}"></label>秒</td>
                         </tr>
                     </table>
                 </div>
@@ -55,8 +62,84 @@
         </div>
     </div>
     <script src="../js/layui.all.js"></script>
+
+    <div style="width:50%">
+        <div id="line-legend">
+        </div>
+        <div>
+            <canvas id="canvas" height="450px" width="800px"></canvas>
+        </div>
+    </div>
     <script>
-     var element = layui.element;
+        $(function() {// 初始化内容
+            $.getJSON("/admin/getChart",function(data){
+                var lineChartData = eval('(' + data.data + ')');
+                var lineChartOptions = {
+                    //网格线是否在数据线的上面
+                    scaleOverlay : false,
+
+                    //是否用硬编码重写y轴网格线
+                    scaleOverride : true,
+
+                    //** Required if scaleOverride is true **
+                    //y轴刻度的个数
+                    scaleSteps : 10,
+
+                    //y轴每个刻度的宽度
+                    scaleStepWidth : 2,
+
+                    // Y 轴的起始值
+                    scaleStartValue : 0,
+                    // Y/X轴的颜色
+                    scaleLineColor: "rgba(0,0,0,.1)",
+                    // X,Y轴的宽度
+                    scaleLineWidth: 1,
+                    // 刻度是否显示标签, 即Y轴上是否显示文字
+                    scaleShowLabels: true,
+                    // Y轴上的刻度,即文字
+                    scaleLabel: "<%=value%>",
+                    // 字体
+                    scaleFontFamily: "'Arial'",
+                    // 文字大小
+                    scaleFontSize: 12,
+                    // 文字样式
+                    scaleFontStyle: "normal",
+                    // 文字颜色
+                    scaleFontColor: "#666",
+                    // 是否显示网格
+                    scaleShowGridLines: false,
+                    // 网格颜色
+                    scaleGridLineColor: "rgba(0,0,0,.05)",
+                    // 网格宽度
+                    scaleGridLineWidth:1,
+                    // 是否使用贝塞尔曲线? 即:线条是否弯曲
+                    bezierCurve: true,
+                    // 是否显示点数
+                    pointDot: true,
+                    // 圆点的大小
+                    pointDotRadius:5,
+                    // 圆点的笔触宽度, 即:圆点外层白色大小
+                    pointDotStrokeWidth: 2,
+                    // 数据集行程(连线路径)
+                    datasetStroke: true,
+                    // 线条的宽度, 即:数据集
+                    datasetStrokeWidth: 2,
+                    // 是否填充数据集
+                    datasetFill: true,
+                    // 是否执行动画
+                    animation: true,
+                    // 动画的时间
+                    animationSteps: 60,
+                    // 动画的特效
+                    animationEasing: "easeOutQuart",
+                    // 动画完成时的执行函数
+                    //onAnimationComplete: null,
+                    multiTooltipTemplate: "<%if (datasetLabel){%><%=datasetLabel%>: <%}%><%= value %>"
+                }
+                // 初始化折线图
+                var myLine = new Chart(document.getElementById("canvas").getContext("2d")).Line(lineChartData,lineChartOptions);
+            });
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>员工管理</title>
+    <script>
+
+    </script>
+    <style>
+        td{
+            border-bottom: 1px solid #5d6779
+        }
+        th{
+            border-bottom: 1px solid #5d6779
+        }
+    </style>
+</head>
+<body>
+<table width="100%">
+        <tr>
+            <th>姓名</th>
+            <th>手机号</th>
+            <th>创建时间</th>
+            <th>级别</th>
+            <th>操作</th>
+        </tr>
+        <tr th:each="staff : ${staffs}" style="text-align: center;height: 46px">
+            <td th:text="${staff.staffName}"></td>
+            <td th:text="${staff.staffPhone}"></td>
+            <td th:text="${staff.creatTime}"></td>
+            <td th:text="${staff.staffManage}"></td>
+            <td>停用</td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://malsup.github.io/jquery.form.js"></script>
+    <script type="text/javascript">
+        $(function() {// 初始化内容
+            $.getJSON("/admin/getCustomer",{index:0},function(data){
+                //此处返回的data已经是json对象
+                //以下其他操作同第一种情况
+                //var json = eval('(' + data.data + ')');
+                $.each(data.data,function(idx,item){
+                    //var json = eval('(' + item + ')');
+                    var tr;
+                    tr='<td>'+item.PhoneName+'</td>';
+                    tr+='<td>'+item.PhoneNumber+'</td>';
+                    switch (item.Star) {
+                        case 0:
+                            tr+='<td>未标记</td>';
+                            break;
+                        case 1:
+                            tr+='<td>一星</td>';
+                            break;
+                        case 2:
+                            tr+='<td>二星</td>';
+                            break;
+                        case 3:
+                            tr+='<td>三星</td>';
+                            break;
+                    }
+                    switch (item.Schedule) {
+                        case 0:
+                            tr+='<td>未标记</td>';
+                            break;
+                        case 1:
+                            tr+='<td>初访</td>';
+                            break;
+                        case 2:
+                            tr+='<td>回访</td>';
+                            break;
+                        case 3:
+                            tr+='<td>再访</td>';
+                            break;
+                        case 4:
+                            tr+='<td>结束</td>';
+                            break;
+                        case 5:
+                            tr+='<td>其它</td>';
+                            break;
+                    }
+                    tr+='<td>'+item.Remarks+'</td>';
+                    $("#tabletest1").append("<tr style='text-align: center;height: 46px'>"+tr+'</tr>');
+                });
+            });
+        });
+
+    </script>
+    <style>
+        td{
+            border-bottom: 1px solid #5d6779
+        }
+        th{
+            border-bottom: 1px solid #5d6779
+        }
+    </style>
+    <title>客户</title>
+</head>
+<body>
+<table id="tabletest1" style="width: 100%;text-align: center;height: 46px">
+    <tr>
+        <th>姓名</th>
+        <th>号码</th>
+        <th>星级</th>
+        <th>进度</th>
+        <th>备注</th>
+    </tr>
+
+</table>
+</body>
+</html>

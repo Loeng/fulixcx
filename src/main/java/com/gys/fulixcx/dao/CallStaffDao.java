@@ -10,8 +10,8 @@ import java.util.Map;
 
 @Transactional
 public interface CallStaffDao extends CrudRepository<CallStaffMode, Integer> {
-    @Query(nativeQuery = true, value = "SELECT C.company_name,S.* FROM call_company C,call_staff S WHERE S.staff_phone = ?1 AND S.company_id = C.id")
-    Map<String,String> login(String phone);
+    @Query(nativeQuery = true, value = "SELECT C.company_name,S.* FROM call_company C,call_staff S WHERE S.staff_phone = ?1 AND S.pass_word = ?2 AND S.company_id = C.id")
+    Map<String,String> login(String phone,String pass);
     List<CallStaffMode> findByCompanyId(int comId);
     CallStaffMode findByStaffPhone(String phone);
     @Query(nativeQuery = true, value = "select * from call_staff where " +

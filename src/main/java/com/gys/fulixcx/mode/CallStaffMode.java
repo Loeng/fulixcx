@@ -1,6 +1,9 @@
 package com.gys.fulixcx.mode;
 
+import com.gys.fulixcx.util.DateUtil;
+
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity

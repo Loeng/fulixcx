@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,17 +20,28 @@ public interface CallCompanyPhoneDao extends CrudRepository<CallCompanyPhoneMode
 
     @Query(nativeQuery = true, value = "SELECT C.staff_id,(select staff_name from call_staff where id = C.staff_id) staff_name,C.up_time,C.task_id,P.* FROM call_company_phone C,call_phone P" +
             " WHERE C.company_id = ?1 AND C.phone_id = P.id order by P.id desc limit ?2,?3")
-    List<Map<String,String>> findListbycomId(int id,int index,int num);
-
+    List<Map<String,String>> findListbycomId(int id, int index, int num);
 
     @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM call_company_phone WHERE company_id = ?1")
     int findNumbycomId(int id);
+    @Query(nativeQuery = true, value = "SELECT COUNT(*) FROM call_company_phone WHERE company_id = ?1 AND T.star > 0 and T.star < 4")
+    int findCustomerNum(int id);
+    @Query(nativeQuery = true, value = "SELECT " +
+            "CP.id Id,CP.phone_name PhoneName,CP.remarks Remarks,CP.star Star,CP.schedule Schedule,P.phone_number PhoneNumber FROM" +
+            " call_company_phone CP,call_phone P WHERE CP.company_id = ?1 AND CP.star > 0 and CP.star < 4 AND CP.phone_id = P.id " +
+            "order by dial_time limit ?2,20")
+    List<Map<String,String>> findCustomerList(int id,int index);
 
     @Query(nativeQuery = true, value = "SELECT " +
             "T.*,P.phone_number,P.carrieroperator,P.attribution " +
             "FROM call_company_phone T,call_phone P WHERE " +
             "T.task_id = ?1 AND T.phone_id = P.id")
     List<Map<String,String>> findTaskPhone(int taskId);
+    @Query(nativeQuery = true, value = "SELECT " +
+            "T.*,P.phone_number,P.carrieroperator,P.attribution " +
+            "FROM call_company_phone T,call_phone P WHERE " +
+            "T.task_id = ?1 AND T.phone_id = P.id AND T.star > 0 and T.star < 4")
+    List<Map<String,String>> findCustomer(int taskId);
     @Query(nativeQuery = true,value = "select count(*) from call_company_phone where company_id = ?1 and task_id = 0")
     int findDistriNum(int comId);
 
