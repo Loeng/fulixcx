@@ -1,6 +1,7 @@
 package com.gys.fulixcx.dao;
 
 import com.gys.fulixcx.mode.CallStaffCallMode;
+import com.gys.fulixcx.mode.CallStaffMode;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

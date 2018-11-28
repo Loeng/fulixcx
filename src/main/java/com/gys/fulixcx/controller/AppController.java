@@ -98,7 +98,7 @@ public class AppController {
         return new JsonReq("注册成功");
     }
     @GetMapping("/setSign")
-    public JsonReq setSign(int id,int star,int schedule,String phone_name,String remarks){
+    public JsonReq setSign(int id,int star,int schedule,String phone_name,String customerLog,String remarks){
         CallCompanyPhoneMode cpmode = callCompanyPhoneDao.findById(id);
         if (cpmode !=null){
             cpmode.setStar(star);
@@ -106,9 +106,9 @@ public class AppController {
             if (phone_name!=null) {
                 cpmode.setPhoneName(phone_name);
             }
-            /*if (remarks!=null) {
+            if (remarks!=null) {
                 cpmode.setRemarks(remarks);
-            }*/
+            }
             CallCompanyPhoneMode save = callCompanyPhoneDao.save(cpmode);
             CallTaskCallHistoryMode byStaffCallId = callTaskHistoryDao.findByStaffCallId(save.getId());
             if (byStaffCallId==null){
@@ -116,12 +116,14 @@ public class AppController {
                 byStaffCallId.setTaskPhoneId(save.getId());
                 byStaffCallId.setConverseTime(save.getConverseTime());
                 byStaffCallId.setDialTime(save.getDialTime());
-                byStaffCallId.setRemarks(remarks);
+                if (customerLog!=null&&!customerLog.isEmpty()) {
+                    byStaffCallId.setRemarks(customerLog);
+                }
                 byStaffCallId.setSchedule(schedule);
                 byStaffCallId.setStar(star);
                 callTaskHistoryDao.save(byStaffCallId);
             }else {
-                byStaffCallId.setRemarks(remarks);
+                byStaffCallId.setRemarks(customerLog);
                 byStaffCallId.setSchedule(schedule);
                 byStaffCallId.setStar(star);
                 callTaskHistoryDao.save(byStaffCallId);
@@ -141,15 +143,27 @@ public class AppController {
         }
     }
     @GetMapping("/getCustomer")
-    public JsonReq getCustomer(int comid,int staffid){
-        List<Map<String, String>> task = callTaskDao.findTask(staffid, comid);
-        List<Map<String, String>> kehu = new ArrayList<Map<String, String>>();
-        for (Map<String, String> map0:task){
-            //System.out.println("---"+String.valueOf(map0.get("id")));
-            List<Map<String, String>> taskPhone = callCompanyPhoneDao.findCustomer(Integer.parseInt(String.valueOf(map0.get("id"))));
-            kehu.addAll(taskPhone);
+    public JsonReq getCustomer(int staffid){
+      List<Map<String, String>> taskPhone = callCompanyPhoneDao.findCustomer(staffid);
+        return new JsonReq(taskPhone);
+    }
+    @GetMapping("/getCustomerScreen")
+    public JsonReq getCustomerScreen(int staffid,int Schedule,int Star,String Text){
+        System.out.println(staffid+"    "+Schedule+"    "+Star+"    "+Text);
+        List<Map<String, String>> taskPhone;
+        if (Schedule == 0&&Star == 0&&Text.isEmpty()){
+            taskPhone = callCompanyPhoneDao.findCustomer(staffid);
+        }else if (Schedule == 0&&Star == 0){
+            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Text);
+        }else if(Schedule == 0){
+            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Star,Text);
+        }else if(Star == 0){
+            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Schedule+"",Text);
+        }else {
+            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Schedule+"",Star+"",Text);
         }
-        return new JsonReq(kehu);
+
+        return new JsonReq(taskPhone);
     }
     @Autowired
     CallStaffCallDao callStaffCallDao;
@@ -250,16 +264,22 @@ public class AppController {
         }
     }
     @GetMapping("/updateStaffCall")
-    public JsonReq updateStaffCall(int id,int star,int schedule,String name,String remarks){
+    public JsonReq updateStaffCall(int id,int star,int schedule,String customerLog,String name,String remarks){
         if (id>0){
             CallStaffCallMode mode = callStaffCallDao.findById(id);
             mode.setStar(star);
             mode.setSchedule(schedule);
-            mode.setName(name);
-            //mode.setRemarks(remarks);
+            if (name!=null) {
+                mode.setName(name);
+            }
+            if (remarks!=null) {
+                mode.setRemarks(remarks);
+            }
             CallStaffCallMode save = callStaffCallDao.save(mode);
             CallStaffCallHistoryMode byStaffCallId = callStaffHistoryDao.findByStaffCallId(save.getId());
-            byStaffCallId.setRemarks(remarks);
+            if (customerLog!=null&&!customerLog.isEmpty()) {
+                byStaffCallId.setRemarks(customerLog);
+            }
             byStaffCallId.setSchedule(save.getSchedule());
             byStaffCallId.setStar(save.getStar());
             callStaffHistoryDao.save(byStaffCallId);
@@ -277,9 +297,18 @@ public class AppController {
             return new JsonReq(201,"获取数据失败");
         }
     }
-    @GetMapping("/getStaff")
-    public JsonReq getStaff(int comid,int staffid){
-        return null;
+    //@Autowired
+    //CallStaffDao callStaffDao;
+    @GetMapping("/updatePass")
+    public JsonReq updatePass(int staffid,String pass,String newPass){
+        CallStaffMode byId = callStaffDao.findById(staffid);
+        if (byId!=null&&byId.getPassWord().equals(MD5Util.StringToMd5(pass))){
+            byId.setPassWord(MD5Util.StringToMd5(newPass));
+            callStaffDao.save(byId);
+            return new JsonReq("修改成功");
+        }else {
+            return new JsonReq(201,"原密码错误");
+        }
     }
     @GetMapping("/getTongji")
     public JsonReq getTongji(int staffId){

@@ -17,4 +17,6 @@ public interface CallStaffDao extends CrudRepository<CallStaffMode, Integer> {
     @Query(nativeQuery = true, value = "select * from call_staff where " +
             "staff_phone = ?1 and pass_word = ?2 and staff_manage > 0")
     CallStaffMode findByLogin(String phone,String pass);
+
+    CallStaffMode findById(int staffId);
 }

@@ -37,11 +37,46 @@ public interface CallCompanyPhoneDao extends CrudRepository<CallCompanyPhoneMode
             "FROM call_company_phone T,call_phone P WHERE " +
             "T.task_id = ?1 AND T.phone_id = P.id")
     List<Map<String,String>> findTaskPhone(int taskId);
+
+    /*
+
+     */
     @Query(nativeQuery = true, value = "SELECT " +
             "T.*,P.phone_number,P.carrieroperator,P.attribution " +
-            "FROM call_company_phone T,call_phone P WHERE " +
-            "T.task_id = ?1 AND T.phone_id = P.id AND T.star > 0 and T.star < 4")
-    List<Map<String,String>> findCustomer(int taskId);
+            "FROM call_task C,call_company_phone T,call_phone P WHERE " +
+            "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND T.star > 0 and T.star < 4")
+    List<Map<String,String>> findCustomer(int staffId);
+
+
+    @Query(nativeQuery = true, value = "SELECT " +
+            "T.*,P.phone_number,P.carrieroperator,P.attribution " +
+            "FROM call_task C,call_company_phone T,call_phone P WHERE " +
+            "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND T.schedule = ?2 and T.star = ?3 and " +
+            "(T.company_name like concat('%',?4,'%') or P.phone_number like concat('%',?4,'%') or T.phone_name like concat('%',?4,'%'))" )
+    List<Map<String,String>> findCustomerScreen(int staffId,String schedule,String star,String like);
+
+    @Query(nativeQuery = true, value = "SELECT " +
+            "T.*,P.phone_number,P.carrieroperator,P.attribution " +
+            "FROM call_task C,call_company_phone T,call_phone P WHERE " +
+            "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND T.schedule = ?2 and " +
+            "(T.company_name like concat('%',?3,'%') or P.phone_number like concat('%',?3,'%') or T.phone_name like concat('%',?3,'%'))" )
+    List<Map<String,String>> findCustomerScreen(int staffId,String schedule,String like);
+
+    @Query(nativeQuery = true, value = "SELECT " +
+            "T.*,P.phone_number,P.carrieroperator,P.attribution " +
+            "FROM call_task C,call_company_phone T,call_phone P WHERE " +
+            "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND T.star = ?2 and " +
+            "(T.company_name like concat('%',?3,'%') or P.phone_number like concat('%',?3,'%') or T.phone_name like concat('%',?3,'%'))" )
+    List<Map<String,String>> findCustomerScreen(int staffId,int star,String like);
+
+    @Query(nativeQuery = true, value = "SELECT " +
+            "T.*,P.phone_number,P.carrieroperator,P.attribution " +
+            "FROM call_task C,call_company_phone T,call_phone P WHERE " +
+            "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id and " +
+            "(T.company_name like concat('%',?2,'%') or P.phone_number like concat('%',?2,'%') or T.phone_name like concat('%',?2,'%'))" )
+    List<Map<String,String>> findCustomerScreen(int staffId,String like);
+
+
     @Query(nativeQuery = true,value = "select count(*) from call_company_phone where company_id = ?1 and task_id = 0")
     int findDistriNum(int comId);
 
