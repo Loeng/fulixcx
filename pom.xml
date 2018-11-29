@@ -120,27 +120,7 @@
             <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
             <version>1.1.0</version>
         </dependency>
-        <!--<dependency>
-            <groupId>zmxy</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.3.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/gson-2.3.1.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>zmxy</groupId>
-            <artifactId>alicom-mns-receive-sdk</artifactId>
-            <version>1.0.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/alicom-mns-receive-sdk-1.0.0.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>zmxy</groupId>
-            <artifactId>aliyun-sdk-mns</artifactId>
-            <version>1.1.8</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/aliyun-sdk-mns-1.1.8.jar</systemPath>
-        </dependency>-->
+
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -163,6 +143,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -170,12 +153,13 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
-                    <compilerArguments>
-                        <extdirs>${project.basedir}/lib</extdirs>
-                    </compilerArguments>
+                    <compilerArgs>
+                        <arg>-extdirs</arg>
+                        <arg>${project.basedir}/lib</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.10</version>
@@ -192,10 +176,25 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
+            <!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>${project.basedir}\lib</directory>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>aliyun-java-sdk-dyplsapi-1.0.0-SNAPSHOT.jar</include>
+                                <include>aliyun-java-sdk-core-3.2.3.jar</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>-->
         </plugins>
         <finalName>Fulixcx</finalName>
     </build>
-
-
 </project>

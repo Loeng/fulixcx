@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 //@RestController
-//@RequestMapping(value = "xcx")
+@RequestMapping(value = "xcx")
 public class FuliController {
     @Autowired
     UserDao userDao;

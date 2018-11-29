@@ -57,8 +57,8 @@ public class SecretDemo {
         request.setPhoneNoB(p2);
         request.setPhoneNoX(NoX);
         //必填:绑定关系对应的失效时间-不能早于当前系统时间
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        long d = new Date().getTime()+5*60*1000;
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//com.aliyuncs.dyplsapi.model
+        long d = new Date().getTime()+30*60*1000;
         request.setExpiration(format.format(new Date(d)));
         //可选:是否需要录制音频-默认是false
         request.setIsRecordingEnabled(false);

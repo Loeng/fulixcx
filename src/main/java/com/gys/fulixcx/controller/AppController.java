@@ -2,6 +2,7 @@ package com.gys.fulixcx.controller;
 
 
 import com.aliyuncs.dyplsapi.model.v20170525.BindAxbResponse;
+import com.aliyuncs.dyplsapi.model.v20170525.UnbindSubscriptionResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.gys.fulixcx.dao.*;
 import com.gys.fulixcx.mode.*;
@@ -297,6 +298,42 @@ public class AppController {
             return new JsonReq(201,"获取数据失败");
         }
     }
+    @GetMapping("/addStaff")
+    public JsonReq addStaff(int staffid,String staffName,String staffPhone,String staffPass,int manage){
+        CallStaffMode staffMode = callStaffDao.findById(staffid);
+        if (staffMode!=null&&staffMode.getStaffManage()==2) {
+            CallStaffMode phone = callStaffDao.findByStaffPhone(staffPhone);
+            if (phone!=null){
+                return new JsonReq(201,"该员工信息已存在");
+            }
+            CallStaffMode mode = new CallStaffMode();
+            mode.setCompanyId(staffMode.getCompanyId());
+            mode.setCreatTime(new Date().getTime()+"");
+            mode.setStaffPhone(staffPhone);
+            mode.setPassWord(MD5Util.StringToMd5(staffPass));
+            mode.setState(1);
+            mode.setStaffName(staffName);
+            mode.setStaffManage(manage);
+            callStaffDao.save(mode);
+            return new JsonReq("添加成功");
+        }else if (staffMode.getStaffManage()!=2){
+            return new JsonReq(201,"级别不足");
+        }else {
+            return new JsonReq(201,"获取数据失败");
+        }
+    }
+    @GetMapping("/getStaff")
+    public JsonReq getStaff(int staffid){
+        CallStaffMode staffMode = callStaffDao.findById(staffid);
+        if (staffMode!=null&&staffMode.getStaffManage()==2) {
+            List<CallStaffMode> staffList = callStaffDao.findByCompanyId(staffMode.getCompanyId());
+            return new JsonReq(staffList);
+        }else if (staffMode.getStaffManage()!=2){
+            return new JsonReq(201,"级别不足");
+        }else {
+            return new JsonReq(201,"获取数据失败");
+        }
+    }
     //@Autowired
     //CallStaffDao callStaffDao;
     @GetMapping("/updatePass")
@@ -330,18 +367,34 @@ public class AppController {
         return new JsonReq(maps);
     }
 
-    /*@GetMapping("/callTial")//电话通知
+    @GetMapping("/callTial")//电话通知
     public JsonReq phone(String phone1,String phone2) {
         BindAxbResponse bindAxbResponse = null;
         try {
             bindAxbResponse = SecretDemo.bindAxb("zanwu",phone1,phone2,"FC100000042948026","17088336965");
             if (bindAxbResponse.getCode().equals("OK")){
-                return new JsonReq("17088336965");
+                return new JsonReq("17088336965");//"17088336965"
             }else{
                 return new JsonReq(201,"电话绑定错误"+bindAxbResponse.getCode());
             }
         } catch (ClientException e) {
             return new JsonReq(201,"代码错误");
         }
-    }*/
+    }
+    @ResponseBody
+    @RequestMapping(value="/MsnNotif",method=RequestMethod.POST)
+    public Msn ajaxRequest(@RequestBody List<MsnMode> mode){//
+        System.out.println("通话通知‘’‘’‘’‘：[" );
+        for (MsnMode m : mode) {
+            //System.out.println(m.toString());
+            try {
+                SecretDemo.unbind(m.getSub_id() + "", "17088336965");
+            } catch (ClientException e) {
+                e.printStackTrace();
+            }
+            //msnDao.save(m);
+        }
+        System.out.println("]’‘’‘’‘’" );
+        return new Msn(0,"接收成功");
+    }
 }
