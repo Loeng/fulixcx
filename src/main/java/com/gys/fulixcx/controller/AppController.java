@@ -32,7 +32,12 @@ public class AppController {
     public JsonReq login(String userPhone,String pass){
         Map<String, String> login = callStaffDao.login(userPhone,MD5Util.StringToMd5(pass));
         if (null!=login.get("company_name")){
+            String state = String.valueOf(login.get("state"));
+            if (!state.equals("0")) {
             return new JsonReq(login);
+            }else {
+                return new JsonReq(201,"账户已被冻结");
+            }
         }else {
             return new JsonReq(201,"未注册用户");
         }
@@ -141,6 +146,37 @@ public class AppController {
             return new JsonReq(byStaffId);
         }else {
             return new JsonReq(201,"获取数据失败");
+        }
+    }
+    @GetMapping("/getRankingList")
+    public JsonReq getRankingList(int staffId,int type){
+        CallStaffMode byId = callStaffDao.findById(staffId);
+        if (byId==null){
+            return new JsonReq(201,"用户不存在");
+        }else {
+            String startTime = new Date().getTime()+"";
+            String endTime = new Date().getTime()+"";
+            switch (type){
+                case 0:
+                    startTime = DateUtil.getMidnight();
+                    break;
+                case 1:
+                    startTime = DateUtil.getYesterday();
+                    endTime = DateUtil.getMidnight();
+                    break;
+                case 2:
+                    startTime = (Long.parseLong(DateUtil.getYesterday())-24*60*60*1000)+"";
+                    endTime = DateUtil.getYesterday();
+                    break;
+                case 3:
+                    startTime = DateUtil.getWeek();
+                    break;
+                case 4:
+                    startTime = DateUtil.getMonth();
+                    break;
+            }
+            List<Map<String, String>> tongjiByCom = callTaskHistoryDao.findTongjiByCom(byId.getCompanyId(), startTime, endTime);
+            return new JsonReq(tongjiByCom);
         }
     }
     @GetMapping("/getCustomer")
@@ -334,6 +370,23 @@ public class AppController {
             return new JsonReq(201,"获取数据失败");
         }
     }
+    @GetMapping("/updateStaff")
+    public JsonReq updateStaff(int staffid,int updateStaffId,int state,String pass){
+        CallStaffMode staffMode = callStaffDao.findById(staffid);
+        if (staffMode!=null&&staffMode.getStaffManage()==2) {
+            CallStaffMode mode = callStaffDao.findById(updateStaffId);
+            mode.setState(state);
+            if (pass!=null&&!pass.isEmpty()) {
+                mode.setPassWord(MD5Util.StringToMd5(pass));
+            }
+            CallStaffMode save = callStaffDao.save(mode);
+            return new JsonReq(save);
+        }else if (staffMode.getStaffManage()!=2){
+            return new JsonReq(201,"级别不足");
+        }else {
+            return new JsonReq(201,"获取数据失败");
+        }
+    }
     //@Autowired
     //CallStaffDao callStaffDao;
     @GetMapping("/updatePass")
@@ -366,7 +419,33 @@ public class AppController {
         maps.add(map7);
         return new JsonReq(maps);
     }
-
+    @Autowired
+    CallRemindDao callRemindDao;
+    @GetMapping("/getRemind")
+    public JsonReq getRemind(int staffId){
+        List<CallRemindMode> reqs = new ArrayList<>();
+        List<CallRemindMode> list = callRemindDao.findRemindNow(
+                staffId,
+                DateUtil.timeStamp2Date(DateUtil.getMidnight()),
+                DateUtil.timeStamp2Date(Long.parseLong(DateUtil.getMidnight())+24*60*60*1000+""));
+        List<CallRemindMode> list2 = callRemindDao.findRemind(
+                staffId,
+                DateUtil.timeStamp2Date(DateUtil.getYesterday()),
+                DateUtil.timeStamp2Date(DateUtil.getMidnight()),
+                DateUtil.dataTostr(new Date(Long.parseLong(DateUtil.getMidnight())+24*60*60*1000)));
+        reqs.addAll(list);
+        reqs.addAll(list2);
+        return new JsonReq(reqs);
+    }
+    @GetMapping("/addRemind")
+    public JsonReq addRemind(int staffId,String time,String data){
+        CallRemindMode mode = new CallRemindMode();
+        mode.setStaffId(staffId);
+        mode.setRemindDate(time);
+        mode.setBody(data);
+        callRemindDao.save(mode);
+        return new JsonReq("保存成功");
+    }
     @GetMapping("/callTial")//电话通知
     public JsonReq phone(String phone1,String phone2) {
         BindAxbResponse bindAxbResponse = null;
@@ -388,7 +467,8 @@ public class AppController {
         for (MsnMode m : mode) {
             //System.out.println(m.toString());
             try {
-                SecretDemo.unbind(m.getSub_id() + "", "17088336965");
+                UnbindSubscriptionResponse unbind = SecretDemo.unbind(m.getSub_id() + "", "17088336965");
+                System.out.println(unbind.getMessage());
             } catch (ClientException e) {
                 e.printStackTrace();
             }
@@ -397,4 +477,5 @@ public class AppController {
         System.out.println("]’‘’‘’‘’" );
         return new Msn(0,"接收成功");
     }
+
 }

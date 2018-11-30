@@ -192,7 +192,7 @@ public class SecretDemo {
         //组装请求对象
         UnbindSubscriptionRequest request = new UnbindSubscriptionRequest();
         //必填:对应的号池Key
-        request.setPoolKey("FC12345678");
+        request.setPoolKey("FC100000042948026");
         //必填-分配的X小号-对应到绑定接口中返回的secretNo;
         request.setSecretNo(secretNo);
         //可选-绑定关系对应的ID-对应到绑定接口中返回的subsId;
