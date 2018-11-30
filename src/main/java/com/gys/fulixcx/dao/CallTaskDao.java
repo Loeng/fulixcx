@@ -2,6 +2,7 @@ package com.gys.fulixcx.dao;
 
 import com.gys.fulixcx.mode.CallStaffMode;
 import com.gys.fulixcx.mode.CallTaskMode;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -27,4 +28,7 @@ public interface CallTaskDao extends CrudRepository<CallTaskMode, Integer> {
             "  from call_task ct WHERE company_id = ?1")
     List<Map<String,String>> findserviceTask(int companyId);
 
+    @Modifying
+    @Query(nativeQuery = true, value = "update call_company_phone set task_id = 0 where task_id = ?1")
+    void releaseTask(Integer id);
 }

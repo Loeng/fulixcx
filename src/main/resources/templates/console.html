@@ -74,6 +74,7 @@
         $(function() {// 初始化内容
             $.getJSON("/admin/getChart",function(data){
                 var lineChartData = eval('(' + data.data + ')');
+                console.dir(lineChartData);
                 var lineChartOptions = {
                     //网格线是否在数据线的上面
                     scaleOverlay : false,

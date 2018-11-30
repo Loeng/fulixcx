@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户列表</title>
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+    <script type="text/javascript" src="../static/easyui/jquery.min.js" th:src="@{/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"
+            th:src="@{/easyui/jquery.easyui.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="@{/easyui/locale/easyui-lang-zh_CN.js}"></script>
+    <script type="text/javascript" src="../static/js/date.js"
+            th:src="@{/js/date.js}"></script>
+
+    <script type="text/javascript" th:inline="none">
+        $(function () {
+            $('#dg').datagrid({
+                url: '/staff/page',
+                columns: [[
+                    {
+                        field: 'staffName', title: '员工姓名',
+                        width: $(this).width() * 0.16,
+                        align: 'center',
+                    },
+                    {
+                        field: 'staffPhone', title: '员工电话',
+                        width: $(this).width() * 0.16,
+                        align: 'center'
+                    },
+                    {
+                        field: 'creatTime', title: '创建时间',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            var date = new Date();
+                            date.setMilliseconds(value);
+                            return date.format("yyyy-MM-dd hh:mm:ss");
+                        },
+                        width: $(this).width() * 0.16,
+                        sortable: true
+                    },
+                    {
+                        field: 'staffManage',
+                        title: '用户等级',
+                        align: 'center',
+                        width: $(this).width() * 0.16,
+                    },
+                    {
+                        field: 'state',
+                        title: '用户状态',
+                        align: 'center',
+                        width: $(this).width() * 0.16,
+                        formatter: function (value, row, index) {
+                            if (value == 1) {
+                                return "已启用";
+                            }
+                            return "已停用";
+                        }
+                    },
+                    {
+                        field: 'id',
+                        title: '操作',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.state == 1) {
+                                return '<a href="javascirpt:void(0);" onclick="stopOrStart(' + value + ',0)">停用</a>';
+                            } else {
+                                return '<a href="javascirpt:void(0);" onclick="stopOrStart(' + value + ',1)">启用</a>';
+                            }
+                        },
+                        width: $(this).width() * 0.17,
+                    }
+                ]],
+                toolbar: [{
+                    iconCls: 'icon-add',
+                    text: "添加员工",
+                    handler: function () {
+                        $("#standardWindow").window('open');
+                    }
+                }],
+                width: $(window).width() - 10,
+                // fitColumns: true,
+                pagination: true,
+                loadMsg: '加载中...',
+                pageSize: 20,
+                pageList: [20, 50, 100, 200]
+            });
+        });
+
+        function stopOrStart(id, state) {
+
+            $.messager.confirm("操作提示", "您确定要" + (state == 1 ? "启" : "停") + "用选中用户吗？", function (data) {
+                if (data) {
+                    $.ajax({
+                        url: '/staff/stopOrStart/' + id + '/' + state,
+                        method: 'POST',
+                        dataType: 'json',
+                        success: function (_dt) {
+                            $.messager.alert("提示", _dt.msg);
+                            if (_dt.code == 200) {
+                                $("#dg").datagrid('reload');
+                            }
+                        },
+                        error: function (_dt) {
+                            $.messager.alert("提示", "操作失败！");
+                        }
+                    });
+                }
+            });
+        }
+
+        function submitForm() {
+            var params = {};
+            var t = $('#searchForm').serializeArray();
+            $.each(t, function () {
+                params[this.name] = this.value;
+            });
+            $('#dg').datagrid({
+                queryParams: params
+            });
+        }
+        function doAdd(){
+            $('#ff').form('submit', {
+                    url:'/staff/add',
+                onSubmit: function(){
+                // do some check
+                // return false to prevent submit;
+            },
+            success:function(_dt){
+                var obj = eval('('+_dt+')');
+                $.messager.alert("提示", obj.msg);
+                if(obj.code == 200){
+                    $("#standardWindow").window('close')
+                    $("#dg").datagrid('reload');
+                }
+            }
+        });
+        }
+        function clearForm(){
+            $('#ff').form('clear');
+        }
+    </script>
+</head>
+<body>
+<div class="easyui-panel" data-options="iconCls:'icon-search'" title="检索栏" style="width:100%;padding:30px 60px;">
+    <form id="searchForm" method="post">
+        <input class="easyui-textbox" name="staffName" style="width:300px;padding-left: 20px;"
+               data-options="label:'姓名:'">
+        <input class="easyui-textbox" name="staffPhone" style="width:300px;padding-left: 20px;"
+               data-options="label:'电话:'">
+        <select data-options="label:'状态',panelHeight:'auto'" class="easyui-combobox" name="state"
+                style="width:300px;padding-left: 20px;">
+            <option value="">&#45;&#45;请选择&#45;&#45;</option>
+            <option value="1">已启用</option>
+            <option value="0">已停用</option>
+        </select>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()"
+           style="width:80px;padding-left: 30px;text-align:center;padding:5px 0">查询</a>
+    </form>
+</div>
+<table id="dg"></table>
+<div class="easyui-window" title="添加员工" id="standardWindow" collapsible="false" minimizable="false" maximizable="false"
+     modal="true" closed="true" style="width:390px;height: 330px;">
+    <div class="easyui-panel" style="width:100%;max-width:400px;padding:30px 60px;">
+        <form id="ff" method="post">
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="staffName" style="width:100%"
+                       data-options="label:'姓名:',required:true">
+            </div>
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="staffPhone" style="width:100%"
+                       data-options="label:'电话:',required:true,validType:'telephone'">
+            </div>
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="passWord" style="width:100%"
+                       data-options="label:'密码:',required:true">
+            </div>
+            <div style="margin-bottom:20px">
+                <select class="easyui-combobox" name="staffManage" label="等级" style="width:100%" data-options="panelHeight:'auto'">
+                    <option value="1">普通管理员</option>
+                    <option value="2">管理员</option>
+                </select>
+            </div>
+        </form>
+        <div style="text-align:center;padding:5px 0">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="doAdd()" style="width:80px">提交</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" style="width:80px">重置</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -95,4 +95,6 @@ public interface CallCompanyPhoneDao extends CrudRepository<CallCompanyPhoneMode
             "call_company_phone WHERE " +
             "dial_type >0 and dial_time > ?1 and dial_time <?2 AND company_id = ?3")
     Map<String,String> findSum(String starttime,String endtime,int comId);
+
+    int countAllByTaskIdAndCompanyId(int taskId,int companyId);
 }

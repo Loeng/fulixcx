@@ -19,4 +19,7 @@ public interface CallStaffDao extends CrudRepository<CallStaffMode, Integer> {
     CallStaffMode findByLogin(String phone,String pass);
 
     CallStaffMode findById(int staffId);
+
+    @Query(nativeQuery = true, value = "select id ,staff_name staffName from call_staff where company_id = ?1 and state <> 0")
+    List<Map<String,Object>> findStaffList(int commodityid);
 }

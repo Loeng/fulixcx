@@ -1,18 +1,21 @@
 package com.gys.fulixcx.controller;
 
+import com.gys.fulixcx.EasyUiVo;
 import com.gys.fulixcx.dao.*;
 import com.gys.fulixcx.mode.*;
+import com.gys.fulixcx.request.ResourceRequest;
+import com.gys.fulixcx.service.CallCompanyPhoneService;
 import com.gys.fulixcx.util.DateUtil;
 import com.gys.fulixcx.util.GysAnnotation;
-import com.gys.fulixcx.util.MD5Util;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
 import java.util.*;
 
 @GysAnnotation
@@ -44,7 +47,7 @@ public class ServiceController {
 
         return "home_test";
     }
-    @RequestMapping(value = "/customer",method = {RequestMethod.GET})
+    @RequestMapping(value = "/customer")
     public String customer(){
         return "customer_list";
     }
@@ -56,25 +59,35 @@ public class ServiceController {
     CallTaskHistoryDao callTaskHistoryDao;
     @Autowired
     CallCompanyPhoneDao callCompanyPhoneDao;
+
+    @Autowired
+    private CallCompanyPhoneService callCompanyPhoneService;
     @RequestMapping(value = "/getComPhone",method = {RequestMethod.GET})
-    public String getComPhone(HttpServletRequest request,int index,int num,Model map){
-        SessionMode comId = (SessionMode) request.getSession().getAttribute("sessionMode");
-        List<Map<String, String>> listbycomId = null;
-        listbycomId = callCompanyPhoneDao.findListbycomId(comId.getCommodityid(),(index-1)*num,num);
-        List<Map<String, String>> mapList = new ArrayList<>();
-        for (Map<String,String> map1:listbycomId){
-            //System.out.println(DateUtil.timeStamp2Date(map1.get("up_time")));
-            Map<String,String> d = new HashMap<String, String>();
-            for (String key:map1.keySet()){
-                d.put(key,map1.get(key));
-            }
-            d.put("upTime",DateUtil.timeStamp2Date(map1.get("up_time")));
-            mapList.add(d);
+    public String getComPhone(HttpServletRequest request, ResourceRequest resourceRequest,  Model map){
+        /*SessionMode comId = (SessionMode) request.getSession().getAttribute("sessionMode");
+        resourceRequest.setCompanyId(comId.getCommodityid());
+        Page<CallCompanyPhone> page = callCompanyPhoneService.findPage(resourceRequest);
+        int start = (resourceRequest.getPageNo()-1)*resourceRequest.getPageSize();
+//        List<Map<String, String>> listbycomId = callCompanyPhoneDao.findListbycomId(comId.getCommodityid(),start,resourceRequest.getPageSize());
+        List<CallCompanyPhone> phoneList = page.getContent();
+        for(CallCompanyPhone callCompanyPhone:phoneList){
+            callCompanyPhone.setUpTime(DateUtil.timeStamp2Date(callCompanyPhone.getUpTime()));
         }
-        map.addAttribute("ComPhone",mapList);
-        map.addAttribute("AllNum",callCompanyPhoneDao.findNumbycomId(comId.getCommodityid()));
-        map.addAttribute("index",index);
-        return "home";
+        map.addAttribute("phoneList",phoneList);
+        map.addAttribute("totalNum",page.getTotalElements());
+        map.addAttribute("resourceRequest",resourceRequest);*/
+        return "home1";
+    }
+    @RequestMapping("/getComPhone1")
+    @ResponseBody
+    public EasyUiVo getComPhone1(HttpServletRequest request, ResourceRequest resourceRequest, Model map) {
+        SessionMode comId = (SessionMode) request.getSession().getAttribute("sessionMode");
+        resourceRequest.setCompanyId(comId.getCommodityid());
+        Page<CallCompanyPhone> page = callCompanyPhoneService.findPage(resourceRequest);
+        EasyUiVo easyUiVo = new EasyUiVo();
+        easyUiVo.setTotal(page.getTotalElements());
+        easyUiVo.setRows(page.getContent());
+        return easyUiVo;
     }
     @RequestMapping(value = "/console",method = {RequestMethod.GET})
     public String console(HttpServletRequest request,Model map){

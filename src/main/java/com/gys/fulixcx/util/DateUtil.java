@@ -58,7 +58,6 @@ public class DateUtil {
     public static String getYesterday(){
         CalendarMode mode = getCalendar();
         String str = mode.getY()+"-"+mode.getM()+"-"+mode.getD();
-        System.out.println("昨日:"+str);
         try {
             return format.parse(str).getTime()-24*60*60*1000+"";
         } catch (ParseException e) {
@@ -71,7 +70,6 @@ public class DateUtil {
     public static String getMonth(){
         CalendarMode mode = getCalendar();
         String str = mode.getY()+"-"+mode.getM()+"-01";
-        System.out.println("当月1日:"+str);
         try {
             return format.parse(str).getTime()+"";
         } catch (ParseException e) {
@@ -84,8 +82,6 @@ public class DateUtil {
     public static String getWeek(){
         CalendarMode mode = getCalendar();
         String str = mode.getY()+"-"+mode.getM()+"-"+mode.getD();
-        System.out.println("当日:"+str);
-        System.out.println("星期几:"+mode.getW());
         try {
             return format.parse(str).getTime()-(mode.getW()==1?6:mode.getW()-2)*24*60*60*1000+"";
         } catch (ParseException e) {

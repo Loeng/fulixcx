@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "call_staff", schema = "yidaofuli", catalog = "")
+@Table(name = "call_staff")
 public class CallStaffMode {
     private int id;
     private String staffPhone;

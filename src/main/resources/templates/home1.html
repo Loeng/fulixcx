@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户列表</title>
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+    <script type="text/javascript" src="../static/easyui/jquery.min.js" th:src="@{/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"
+            th:src="@{/easyui/jquery.easyui.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="@{/easyui/locale/easyui-lang-zh_CN.js}"></script>
+
+    <script type="text/javascript" th:inline="none">
+        $(function () {
+            $('#dg').datagrid({
+                url: '/service/getComPhone1',
+                columns: [[
+                    {field: 'id', title: 'id', width: $(this).width() * 0.05},
+                    {
+                        field: 'childName', title: '姓名', formatter: function (value, row, index) {
+                            if (row.callPhoneMode) {
+                                return row.callPhoneMode.phoneName;
+                            }
+                        },
+                        width: $(this).width() * 0.10
+                    },
+                    {
+                        field: 'childNumber', title: '电话号码', formatter: function (value, row, index) {
+                            if (row.callPhoneMode) {
+                                return row.callPhoneMode.phoneNumber;
+                            }
+                        },
+                        width: $(this).width() * 0.2
+                    },
+                    {field: 'remarks', title: '备注'},
+                    {
+                        field: 'childCarrieroperator', title: '归属地', formatter: function (value, row, index) {
+                            if (row.callPhoneMode) {
+                                return row.callPhoneMode.carrieroperator;
+                            }
+                        },
+                        width: $(this).width() * 0.1
+                    },
+                    {
+                        field: 'childAttibution', title: '运营商', formatter: function (value, row, index) {
+                            if (row.callPhoneMode) {
+                                return row.callPhoneMode.attribution;
+                            }
+                        },
+                        width: $(this).width() * 0.1
+                    },
+                    {
+                        field: 'taskId', title: '是否分配', formatter: function (value, row, index) {
+                            if (value == 0) {
+                                return '否';
+                            } else {
+                                return '是';
+                            }
+                        },
+                        align: 'center',
+                        width: $(this).width() * 0.05
+                    },
+                    {
+                        field: 'callStaffMode', title: '上传人', formatter: function (value, row, index) {
+                            if (value) {
+                                return value.staffName;
+                            }
+                        },
+                        width: $(this).width() * 0.1
+                    },
+                    {field: 'upTime', title: '修改时间', width: $(this).width() * 0.1}
+                ]],
+                width: $(window).width() - 10,
+                // fitColumns: true,
+                pagination: true,
+                loadMsg: '加载中...',
+                pageSize: 20,
+                pageList: [20, 50, 100, 200]
+            });
+        });
+
+        function submitForm() {
+            var params = {};
+            var t = $('form').serializeArray();
+            $.each(t, function () {
+                params[this.name] = this.value;
+            });
+            $('#dg').datagrid({
+                queryParams: params
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="easyui-panel" data-options="iconCls:'icon-search'" title="检索栏" style="width:100%;padding:30px 60px;">
+    <form id="searchForm" method="post">
+        <input class="easyui-textbox" name="phoneName" style="width:300px;padding-left: 20px;"
+               data-options="label:'姓名:'">
+        <input class="easyui-textbox" name="phoneNumber" style="width:300px;padding-left: 20px;"
+               data-options="label:'电话:'">
+        <input class="easyui-textbox" name="carrieroperator" style="width:300px;padding-left: 20px;"
+               data-options="label:'归属地:'">
+        <select data-options="label:'是否分配',panelHeight:'auto'" class="easyui-combobox" name="assign"
+                style="width:300px;padding-left: 20px;">
+            <option value=""></option>
+            <option value="1">是</option>
+            <option value="0">否</option>
+        </select>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()"
+           style="width:80px;padding-left: 30px;text-align:center;padding:5px 0">查询</a>
+    </form>
+</div>
+<table id="dg"></table>
+</body>
+</html>

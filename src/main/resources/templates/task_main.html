@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户列表</title>
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+    <script type="text/javascript" src="../static/easyui/jquery.min.js" th:src="@{/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"
+            th:src="@{/easyui/jquery.easyui.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="@{/easyui/locale/easyui-lang-zh_CN.js}"></script>
+    <script type="text/javascript" src="../static/js/date.js"
+            th:src="@{/js/date.js}"></script>
+
+    <script type="text/javascript" th:inline="none">
+        $(function () {
+            $('#dg').datagrid({
+                url: '/task/page',
+                columns: [[
+                    {
+                        field: 'taskName', title: '任务名称',
+                        width: $(this).width() * 0.16,
+                        align: 'center',
+                    },
+                    {
+                        field: 'publishName', title: '发布人',
+                        width: $(this).width() * 0.12,
+                        align: 'center'
+                    },
+                    {
+                        field: 'issuerTime', title: '发布时间',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            var date = new Date();
+                            date.setMilliseconds(value);
+                            return date.format("yyyy-MM-dd hh:mm:ss");
+                        },
+                        width: $(this).width() * 0.12,
+                        sortable: true
+                    },
+                    {
+                        field: 'executorName',
+                        title: '执行人',
+                        align: 'center',
+                        width: $(this).width() * 0.12,
+                    },
+                    {
+                        field: 'remarks',
+                        title: '备注',
+                        align: 'center',
+                        width: $(this).width() * 0.12
+                    },
+                    {
+                        field: 'allNum',
+                        title: '号码总数',
+                        align: 'center',
+                        width: $(this).width() * 0.06
+                    },
+                    {
+                        field: 'calledNum',
+                        title: '已拨打',
+                        align: 'center',
+                        width: $(this).width() * 0.06
+                    },
+                    {
+                        field: 'callNot',
+                        title: '未接通',
+                        align: 'center',
+                        width: $(this).width() * 0.06
+                    },
+                    {
+                        field: 'invalidNum',
+                        title: '无效号码',
+                        align: 'center',
+                        width: $(this).width() * 0.06
+                    },
+                    {
+                        field: 'id',
+                        title: '操作',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            if (row.state == 1) {
+                                return '<a href="javascirpt:void(0);" onclick="stopOrStart(' + value + ',0)">停用</a>';
+                            } else {
+                                return '<a href="javascirpt:void(0);" onclick="stopOrStart(' + value + ',1)">释放</a>';
+                            }
+                        },
+                        width: $(this).width() * 0.10,
+                    }
+                ]],
+                toolbar: [{
+                    iconCls: 'icon-add',
+                    text: "发布任务",
+                    handler: function () {
+                        $("#standardWindow").window('open');
+                    }
+                }],
+                width: $(window).width() - 10,
+                // fitColumns: true,
+                pagination: true,
+                loadMsg: '加载中...',
+                pageSize: 20,
+                pageList: [20, 50, 100, 200]
+            });
+        });
+
+        function stopOrStart(id, state) {
+
+            $.messager.confirm("操作提示", "您确定要释放选中的任务吗？", function (data) {
+                if (data) {
+                    $.ajax({
+                        url: '/task/release/' + id ,
+                        method: 'POST',
+                        dataType: 'json',
+                        success: function (_dt) {
+                            $.messager.alert("提示", _dt.msg);
+                            if (_dt.code == 200) {
+                                $("#dg").datagrid('reload');
+                            }
+                        },
+                        error: function (_dt) {
+                            $.messager.alert("提示", "操作失败！");
+                        }
+                    });
+                }
+            });
+        }
+
+        function submitForm() {
+            var params = {};
+            var t = $('#searchForm').serializeArray();
+            $.each(t, function () {
+                params[this.name] = this.value;
+            });
+            $('#dg').datagrid({
+                queryParams: params
+            });
+        }
+        function doAdd(){
+            $('#ff').form('submit', {
+                    url:'/task/add',
+                onSubmit: function(){
+                // do some check
+                // return false to prevent submit;
+            },
+            success:function(_dt){
+                var obj = eval('('+_dt+')');
+                $.messager.alert("提示", obj.msg);
+                if(obj.code == 200){
+                    $("#standardWindow").window('close');
+                    $("#dg").datagrid('reload');
+                }
+            }
+        });
+        }
+        function clearForm(){
+            $('#ff').form('clear');
+        }
+    </script>
+</head>
+<body>
+<div class="easyui-panel" data-options="iconCls:'icon-search'" title="检索栏" style="width:100%;padding:30px 60px;">
+    <form id="searchForm" method="post">
+        <input class="easyui-textbox" name="taskName" style="width:300px;padding-left: 20px;"
+               data-options="label:'任务名称:'">
+        <input class="easyui-textbox" name="publishName" style="width:300px;padding-left: 20px;"
+               data-options="label:'发布人:'">
+        <input class="easyui-textbox" name="executorName" style="width:300px;padding-left: 20px;"
+               data-options="label:'执行人:'">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()"
+           style="width:80px;padding-left: 30px;text-align:center;padding:5px 0">查询</a>
+    </form>
+</div>
+<div style="height:100%">
+    <table id="dg"></table>
+</div>
+<div class="easyui-window" title="发布任务" id="standardWindow" collapsible="false" minimizable="false" maximizable="false"
+     modal="true" closed="true" style="width:390px;height: 330px;">
+    <div class="easyui-panel" style="width:100%;max-width:400px;padding:30px 60px;">
+        <form id="ff" method="post">
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="taskName" style="width:100%"
+                       data-options="label:'任务名称:',required:true">
+            </div>
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="remarks" style="width:100%"
+                       data-options="label:'备注:',required:true">
+            </div>
+            <div style="margin-bottom:20px">
+                <select class="easyui-combobox" name="staffId" label="分配员工" style="width:100%"
+                        data-options="panelHeight:'auto',url:'/task/getStaff',valueField: 'id',
+					textField: 'staffName'">
+                </select>
+            </div>
+            <div style="margin-bottom:20px">
+                <input class="easyui-textbox" name="asignNum" style="width:100%"
+                       data-options="label:'分配数量:',required:true">
+            </div>
+        </form>
+        <div style="text-align:center;padding:5px 0">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="doAdd()" style="width:80px">提交</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" style="width:80px">重置</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

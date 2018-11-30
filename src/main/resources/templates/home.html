@@ -11,8 +11,67 @@
             border-bottom: 1px solid #5d6779
         }
     </style>
+    <link rel="stylesheet" href="../css/page.css">
+    <script src="../static/js/jquery-1.9.1.min.js" th:src="@{/js/jquery-1.9.1.min.js}"></script>
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+    <script type="text/javascript" src="../static/easyui/jquery.min.js" th:src="@{/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js" th:src="@{/easyui/jquery.easyui.min.js}"></script>
+    <script th:inline="javascript">
+        var pageNo = [[${resourceRequest.pageNo}]];
+        var total = [[${totalNum}]];
+        var pageSize = 20;
+        window.onload = function(){
+            $("#totalNum").html(total);
+            $("#currentPage").html(pageNo);
+            var totalPages = Math.ceil(total/pageSize);
+            $("#totalPages").html(totalPages);
+            if(pageNo ==1){
+                $("#firstPage").hide();
+                $("#prePage").hide();
+            }
+            if(totalPages == pageNo){
+                $("#nextPage").hide();
+                $("#lastPage").hide();
+            }
+            $("#firstPage").bind('click',function () {
+                $("#pageNo").val(1);
+                page();
+            });
+            $("#prePage").bind('click',function () {
+                $("#pageNo").val(pageNo-1);
+                page();
+            });
+            $("#nextPage").bind('click',function () {
+                $("#pageNo").val(pageNo+1);
+                page();
+            });
+            $("#lastPage").bind('click',function () {
+                $("#pageNo").val(totalPages);
+                page();
+            });
+            $("#box").dialog({
+                title:"my dialog",
+                width:500,
+                height:200
+            });
+        }
+        function page() {
+            $("#searchForm").submit();
+            return false;
+        }
+    </script>
 </head>
 <body>
+<div class="easyui-panel" data-options="iconCls:'icon-search'" title="检索栏" style="width:100%;padding:30px 60px;">
+    <form id="searchForm" action="/service/getComPhone" method="get">
+        <input type="hidden" id="pageNo" name="pageNo" th:value="${resourceRequest.pageNo}">
+        <input type="hidden" name="pageSize" th:value="${resourceRequest.pageSize}">
+        <label>姓名</label>:<input name="phoneName" th:value="${resourceRequest.phoneName}">
+        <label>电话</label>:<input name="phoneNumber" th:value="${resourceRequest.phoneNumber}">
+        <input type="submit" value="查询" />
+    </form>
+</div>
 <table style="width: 100%" cellspacing="0">
     <tr style="width: 100%">
         <th>id</th>
@@ -25,19 +84,27 @@
         <th>上传人</th>
         <th>修改时间</th>
     </tr>
-    <tr style="text-align: center;height: 46px" th:each="phone : ${ComPhone}">
+    <tr style="text-align: center;height: 46px" th:each="phone : ${phoneList}">
         <td  th:text="${phone.id}"></td>
-        <td  th:text="${phone.phone_name}"></td>
-        <td  th:text="${phone.phone_number}"></td>
+        <td  th:text="${phone.callPhoneMode.phoneName}"></td>
+        <td  th:text="${phone.callPhoneMode.phoneNumber}"></td>
         <td  th:text="${phone.remarks}"></td>
-        <td  th:text="${phone.carrieroperator}"></td>
-        <td  th:text="${phone.attribution}"></td>
-        <td  th:text="${phone.task_id} == 0?'否':'是'"></td>
-        <td  th:text="${phone.staff_name}"></td>
+        <td  th:text="${phone.callPhoneMode.carrieroperator}"></td>
+        <td  th:text="${phone.callPhoneMode.attribution}"></td>
+        <td  th:text="${phone.taskId} == 0?'否':'是'"></td>
+        <td  th:text="${phone.callStaffMode.staffName}"></td>
         <td  th:text="${phone.upTime}"></td>
 
     </tr>
 
 </table>
+<ul class="pagination">
+    <li><a id="firstPage">首页</a></li>
+    <li><a id="prePage">上一页</a></li>
+    <li><a class="active">第&nbsp;&nbsp;<span id="currentPage">1</span>&nbsp;&nbsp;页</a></li>
+    <li><a id="nextPage">下一页</a></li>
+    <li><a id="lastPage">尾页</a></li>
+    <li><a href="javascript:void(0)">共<span id="totalPages">10</span>页，<span id="totalNum">0</span>条记录</a></li>
+</ul>
 </body>
 </html>

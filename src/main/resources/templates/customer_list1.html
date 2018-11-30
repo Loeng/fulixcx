@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户列表</title>
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+    <script type="text/javascript" src="../static/easyui/jquery.min.js" th:src="@{/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"
+            th:src="@{/easyui/jquery.easyui.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="@{/easyui/locale/easyui-lang-zh_CN.js}"></script>
+
+    <script type="text/javascript" th:inline="none">
+        $(function () {
+            $('#dg').datagrid({
+                url: '/customer/page',
+                columns: [[
+                    {field: 'id', title: 'id', width: $(this).width() * 0.05},
+                    {
+                        field: 'phoneName', title: '姓名',
+                        width: $(this).width() * 0.2,
+                        align: 'center',
+                    },
+                    {
+                        field: 'phoneNumber', title: '电话号码',
+                        width: $(this).width() * 0.2,
+                        align: 'center'
+                    },
+                    {
+                        field: 'star', title: '星级', formatter: function (value, row, index) {
+                            var level = "";
+                            switch (value) {
+                                case 0:
+                                    level = '未标记';
+                                    break;
+                                case 1:
+                                    level = '一星';
+                                    break;
+                                case 2:
+                                    level = '二星';
+                                    break;
+                                case 3:
+                                    level = '三星';
+                                    break;
+                            }
+                            return level;
+                        },
+                        align: 'center',
+                        width: $(this).width() * 0.1,
+                        sortable :true
+                    },
+
+                    {
+                        field: 'schedule',
+                        title: '进度',
+                        width: $(this).width() * 0.1,
+                        formatter: function (value, row, index) {
+                            var progress = "";
+                            switch (value) {
+                                case 0:
+                                    progress = '未标记';
+                                    break;
+                                case 1:
+                                    progress = '初访';
+                                    break;
+                                case 2:
+                                    progress = '回访';
+                                    break;
+                                case 3:
+                                    progress = '再访';
+                                    break;
+                                case 4:
+                                    progress = '结束';
+                                    break;
+                                case 5:
+                                    progress = '其它';
+                                    break;
+                            }
+                            return progress;
+                        },
+                        align: 'center',
+                        sortable :true
+                    },
+                    {
+                        field: 'remarks', title: '备注', width: $(this).width() * 0.3
+                    }
+                ]],
+                width: $(window).width() - 10,
+                // fitColumns: true,
+                pagination: true,
+                loadMsg: '加载中...',
+                pageSize: 20,
+                pageList: [20, 50, 100, 200]
+            });
+        });
+
+        function submitForm() {
+            var params = {};
+            var t = $('form').serializeArray();
+            $.each(t, function () {
+                params[this.name] = this.value;
+            });
+            $('#dg').datagrid({
+                queryParams: params
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="easyui-panel" data-options="iconCls:'icon-search'" title="检索栏" style="width:100%;padding:30px 60px;">
+    <form id="searchForm" method="post">
+    <input class="easyui-textbox" name="phoneName" style="width:300px;padding-left: 20px;"
+        data-options="label:'姓名:'">
+    <input class="easyui-textbox" name="phoneNumber" style="width:300px;padding-left: 20px;"
+    data-options="label:'电话:'">
+    <select data-options="label:'星级',panelHeight:'auto'" class="easyui-combobox" name="star"
+        style="width:300px;padding-left: 20px;">
+        <option value="">--请选择--</option>
+        <option value="1">一星</option>
+        <option value="2">二星</option>
+        <option value="3">三星</option>
+    </select>
+    <select data-options="label:'进度',panelHeight:'auto'" class="easyui-combobox" name="level"
+            style="width:300px;padding-left: 20px;">
+        <option value="">--请选择--</option>
+        <option value="1">初访</option>
+        <option value="2">回访</option>
+        <option value="3">再访</option>
+        <option value="4">结束</option>
+        <option value="5">其它</option>
+    </select>
+    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()"
+    style="width:80px;padding-left: 30px;text-align:center;padding:5px 0">查询</a>
+    </form>
+</div>
+<table id="dg"></table>
+</body>
+</html>

@@ -34,6 +34,12 @@
                     });
                 }
             });
+            $('#password').bind('keyup', function(event) {
+                if (event.keyCode == "13") {
+                    //回车执行查询
+                    $('#login').click();
+                }
+            });
         });
 
         //JS校验form表单信息
@@ -50,7 +56,6 @@
             }
             return true;
         }
-
     </script>
 </head>
 <body class="login-wrap">
