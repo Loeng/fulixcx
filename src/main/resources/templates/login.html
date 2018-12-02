@@ -11,6 +11,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://malsup.github.io/jquery.form.js"></script>
     <script type="text/javascript">
+
         //ajax 方式上传文件操作
         $(document).ready(function(){
             $('#login').click(function(){
@@ -18,15 +19,21 @@
                     $('#loging_form').ajaxSubmit({
                         url:'/admin/login',
                         dataType: 'json',
+                        beforeSend: function () {
+
+                        },
                         success: function resutlMsg(msg){
 
                             if (msg.code == 200){
-                                //window.location.href='http://www.mchomes.cn:8081/service/home';
-                                window.location.href='http://localhost:8080/service/home';
+                                window.location.href='http://www.mchomes.cn:8081/service/home';
+                                //window.location.href='http://localhost:8080/service/home';
                             } else {
                                 alert(msg.msg);
                             }
                             $("#upfile").val("");
+                        },
+                        complete: function () {
+
                         },
                         error: function errorMsg(){
                             alert("出错！");
@@ -76,6 +83,7 @@
             <button type="button" id="login" name="login" class="login-button">登录<i class="ai ai-enter"></i></button>
         </form>
     </div>
+
 </body>
 <script src="/js/layui.js"></script>
 <script src="/js/index.js"></script>

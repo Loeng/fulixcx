@@ -20,6 +20,7 @@ public class CallCompanyPhoneMode {
     private String phoneName;
     private Integer taskId;
     private String companyName;
+    private Integer categoryId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +52,14 @@ public class CallCompanyPhoneMode {
     public void setTaskId(Integer taskId) {
         this.taskId = taskId;
     }
+    @Column(name = "category_id")
+    public Integer getCategoryId() {
+        return categoryId;
+    }
 
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
     @Basic
     @Column(name = "dial_type")
     public Integer getDialType() {
@@ -174,11 +182,12 @@ public class CallCompanyPhoneMode {
                 Objects.equals(converseTime, that.converseTime) &&
                 Objects.equals(phoneName, that.phoneName) &&
                 Objects.equals(taskId, that.taskId) &&
+                Objects.equals(categoryId, that.categoryId) &&
                 Objects.equals(upTime, that.upTime);
     }
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, companyId, phoneId, remarks, staffId, upTime,dialType,star,schedule,dialTime,converseTime,phoneName,taskId);
+        return Objects.hash(id, companyId, phoneId, remarks, staffId, upTime,dialType,star,schedule,dialTime,converseTime,phoneName,taskId,categoryId);
     }
 }

@@ -26,7 +26,7 @@ public class UserConfig extends HandlerInterceptorAdapter {
                     System.out.println("非AJAX请求..");
                     //此时requestType为null
                 }
-                response.sendRedirect(request.getContextPath()+"/login/admin");
+                response.sendRedirect(request.getContextPath()+"");
                 return false;
             }
         }

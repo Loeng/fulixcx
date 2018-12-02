@@ -6,6 +6,12 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://malsup.github.io/jquery.form.js"></script>
     <script type="text/javascript">
+        function lode(){
+            document.getElementById('divC').setAttribute("style","display")
+        }
+        function closelode(){
+            document.getElementById('divC').setAttribute("style","display:none")
+        }
         //ajax 方式上传文件操作
         $(document).ready(function(){
             $('#btn').click(function(){
@@ -14,14 +20,19 @@
                         url:'../uploadExcel/ajaxUpload.do',
                         dataType: 'text',
                         success: resutlMsg,
+                        beforeSubmit:kaishi,
                         error: errorMsg
                     });
                     function resutlMsg(msg){
+                        closelode();
                         alert(msg);
                         $("#upfile").val("");
                     }
+                    function kaishi() {
+                        lode();
+                    }
                     function errorMsg(){
-
+                        closelode();
                         alert("导入excel出错！");
                     }
                 }
@@ -43,9 +54,13 @@
         }
 
     </script>
+    <style>
+        .divcss5-1{position:absolute;z-index:10;;left:10px;top:10px}
+        .divcss5-2{position:absolute;z-index:20;left:0px;top:0px}
+    </style>
 </head>
 <body>
-<div style="text-align: center">
+<div class="divcss5-1" style="text-align: center;">
 <form method="POST"  enctype="multipart/form-data" id="form1" action="../uploadExcel/upload.do">
     <table style="text-align: left">
         <tr>
@@ -82,10 +97,19 @@
             <td><img src="http://www.mchomes.cn:8081/images/moban.png"></td>
         </tr>
         <tr>
+            <td><a href="http://www.mchomes.cn/zymb.xlsx" download="资源模板.xlsx">点击下载模板</a></td>
+        </tr>
+        <tr>
             <td><input type="button" value="提交" id="btn" name="btn" ></td>
         </tr>
     </table>
 </form>
+</div>
+<div id="divC"  class="divcss5-2" style="width: 100vw;height: 100vh; background: #00000044;text-align: center;line-height: 100vh;display: none">
+
+    <img src="http://localhost:8080/images/5-121204193R4.gif">
+    上传中，请稍后。。
+    </div>
 </div>
 </body>
 </html>

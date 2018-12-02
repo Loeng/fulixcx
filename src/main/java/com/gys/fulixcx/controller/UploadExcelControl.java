@@ -16,6 +16,7 @@ import com.gys.fulixcx.mode.*;
 import com.gys.fulixcx.util.GysAnnotation;
 import com.gys.fulixcx.util.ImportExcelUtil;
 import com.gys.fulixcx.util.UrlReqUtil;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -89,48 +90,38 @@ public class UploadExcelControl {
         if(file.isEmpty()){
             throw new Exception("文件不存在！");
         }
-        //CallCompanyMode companyMode = callCompanyDao.findById(Integer.parseInt(ComID));
-
         in = file.getInputStream();
         listob = new ImportExcelUtil().getBankListByExcel(in,file.getOriginalFilename());
 
         //该处可调用service相应方法进行数据保存到数据库中，现只对数据输出
         List<CallPhoneMode> list = new ArrayList<CallPhoneMode>();
         List<CallCompanyPhoneMode> list1 = new ArrayList<CallCompanyPhoneMode>();
-        List<Integer> ids = new ArrayList<Integer>();
         for (int i = 0; i < listob.size(); i++) {
             List<Object> lo = listob.get(i);
-
             CallPhoneMode vo = new CallPhoneMode();
             vo.setPhoneNumber(String.valueOf(lo.get(0)));
             vo.setPhoneName(String.valueOf(lo.get(1)));
             vo.setRemarks(String.valueOf(lo.get(2)));
-            String str = UrlReqUtil.get("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel="+lo.get(0));
-            System.out.println(str);
-            String jsonStr = str.substring(str.indexOf("{")-1,str.length());
-            System.out.println(jsonStr);
-            if (jsonStr.length()>50) {
-                JSONObject object = new JSONObject(jsonStr);
-                vo.setAttribution(object.getString("carrier"));
-                vo.setCarrieroperator(object.getString("province"));
-            }else {
-                continue;
-            }
-            /*if(companyMode == null){
-
-            }else {*/
-                CallPhoneMode byPhoneNumber = callPhoneDao.findByPhoneNumber(vo.getPhoneNumber());
-                if (byPhoneNumber == null){
-                    vo.setUpDate(""+new Date().getTime());
-                    list.add(vo);
-                    //byPhoneNumber = callPhoneDao.save(vo);
+            CallPhoneMode byPhoneNumber = callPhoneDao.findByPhoneNumber(vo.getPhoneNumber());
+            if (byPhoneNumber == null){
+                String str = UrlReqUtil.get("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel="+vo.getPhoneNumber());
+                String jsonStr = str.substring(str.indexOf("{")-1,str.length());
+                System.out.println(jsonStr);
+                if (jsonStr.length()>50) {
+                    JSONObject object = null;
+                    object = new JSONObject(jsonStr);
+                    vo.setAttribution(object.getString("carrier"));
+                    vo.setCarrieroperator(object.getString("province"));
                 }else {
-                    list.add(byPhoneNumber);
+                    continue;
                 }
-
-            //}
-
+                vo.setUpDate(""+new Date().getTime());
+                list.add(vo);
+            }else {
+                list.add(byPhoneNumber);
+            }
         }
+
         Iterable<CallPhoneMode> callPhoneModes = callPhoneDao.saveAll(list);
         for (CallPhoneMode mode: callPhoneModes){
             CallCompanyPhoneMode phoneMode = callCompanyPhoneDao.findByCompanyIdAndPhoneId(comId.getCommodityid(),mode.getId());
@@ -161,7 +152,47 @@ public class UploadExcelControl {
         out.flush();
         out.close();
     }
-
-
+    private void n(List<List<Object>> listob){
+        List<CallPhoneMode> list = new ArrayList<CallPhoneMode>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for (int i = 0; i < listob.size(); i++) {
+                        List<Object> lo = listob.get(i);
+                        CallPhoneMode vo = new CallPhoneMode();
+                        vo.setPhoneNumber(String.valueOf(lo.get(0)));
+                        vo.setPhoneName(String.valueOf(lo.get(1)));
+                        vo.setRemarks(String.valueOf(lo.get(2)));
+                        CallPhoneMode byPhoneNumber = callPhoneDao.findByPhoneNumber(vo.getPhoneNumber());
+                        if (byPhoneNumber == null){
+                            String str = UrlReqUtil.get("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel="+vo.getPhoneNumber());
+                            String jsonStr = str.substring(str.indexOf("{")-1,str.length());
+                            System.out.println(jsonStr);
+                            if (jsonStr.length()>50) {
+                                JSONObject object = null;
+                                object = new JSONObject(jsonStr);
+                                vo.setAttribution(object.getString("carrier"));
+                                vo.setCarrieroperator(object.getString("province"));
+                            }else {
+                                continue;
+                            }
+                            vo.setUpDate(""+new Date().getTime());
+                            list.add(vo);
+                        }else {
+                            list.add(byPhoneNumber);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                runBack1.Back(list);
+            }
+        }).start();
+    }
+    private runBack runBack1;
+    interface runBack{
+        void Back(List<CallPhoneMode> list);
+    }
 }
 

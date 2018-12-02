@@ -19,6 +19,7 @@ public class CallCompanyPhone {
     private Integer converseTime;
     private String phoneName;
     private String taskId;
+    private Integer categoryId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +42,14 @@ public class CallCompanyPhone {
         this.phoneName = phoneName;
     }
 
+    @Column(name = "category_id")
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
     @Column(name = "dial_type")
     public Integer getDialType() {
         return dialType;

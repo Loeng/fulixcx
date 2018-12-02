@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-@RequestMapping("/login")
+@RequestMapping("")
 public class LoginController {
 
-    @RequestMapping(value = "/admin",method = {RequestMethod.GET})
+    @RequestMapping(value = "",method = {RequestMethod.GET})
     public String admin(HttpServletRequest request,String username,String password){
         return "login";
     }
