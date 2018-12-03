@@ -61,8 +61,8 @@ public class AppController {
     @Autowired
     CallCompanyPhoneDao callCompanyPhoneDao;
     @GetMapping("/getTaskPhone")
-    public JsonReq getTaskphone(int taskId){
-        List<Map<String,String>> byTaskId = callCompanyPhoneDao.findTaskPhone(taskId);
+    public JsonReq getTaskphone(int taskId,int index){
+        List<Map<String,String>> byTaskId = callCompanyPhoneDao.findTaskPhone(taskId,index*20);
         return new JsonReq(byTaskId);
     }
     @Autowired
@@ -101,11 +101,15 @@ public class AppController {
         companyMode.setCompanyName(ComName);
         companyMode.setCompanyCorporation(corporation);
         companyMode.setCompanyManage(manage);
+        companyMode.setCreatTime(new Date().getTime()+"");
+        companyMode.setEndTime((new Date().getTime()+3*24*60*60*1000)+"");
+        companyMode.setServiceType("1");
         CallCompanyMode save = callCompanyDao.save(companyMode);
         byStaffPhone = new CallStaffMode();
         byStaffPhone.setCompanyId(save.getId());
         byStaffPhone.setStaffName(manage);
         byStaffPhone.setStaffPhone(phone);
+        byStaffPhone.setPassWord(MD5Util.StringToMd5(phone.substring(phone.length()-4,phone.length())));
         byStaffPhone.setState(0);
         byStaffPhone.setStaffManage(2);
         byStaffPhone.setCreatTime(""+new Date().getTime());
