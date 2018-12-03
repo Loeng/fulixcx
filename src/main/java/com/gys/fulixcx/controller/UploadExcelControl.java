@@ -121,7 +121,6 @@ public class UploadExcelControl {
                 list.add(byPhoneNumber);
             }
         }
-
         Iterable<CallPhoneMode> callPhoneModes = callPhoneDao.saveAll(list);
         for (CallPhoneMode mode: callPhoneModes){
             CallCompanyPhoneMode phoneMode = callCompanyPhoneDao.findByCompanyIdAndPhoneId(comId.getCommodityid(),mode.getId());
@@ -139,9 +138,9 @@ public class UploadExcelControl {
                 phoneMode.setConverseTime(0);
                 phoneMode.setTaskId(0);
                 list1.add(phoneMode);
-                //callCompanyPhoneDao.save(phoneMode);
+
             }else {
-                //list1.add(phoneMode);
+
             }
         }
         callCompanyPhoneDao.saveAll(list1);
@@ -152,7 +151,7 @@ public class UploadExcelControl {
         out.flush();
         out.close();
     }
-    private void n(List<List<Object>> listob){
+    /*private void n(List<List<Object>> listob){
         List<CallPhoneMode> list = new ArrayList<CallPhoneMode>();
         new Thread(new Runnable() {
             @Override
@@ -193,6 +192,6 @@ public class UploadExcelControl {
     private runBack runBack1;
     interface runBack{
         void Back(List<CallPhoneMode> list);
-    }
+    }*/
 }
 

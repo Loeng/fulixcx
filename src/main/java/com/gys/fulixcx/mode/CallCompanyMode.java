@@ -12,6 +12,9 @@ public class CallCompanyMode {
     private String companyIndustry;
     private String companyCorporation;
     private String companyManage;
+    private String creatTime;
+    private String endTime;
+    private String serviceType;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,7 +76,33 @@ public class CallCompanyMode {
     public void setCompanyManage(String companyManage) {
         this.companyManage = companyManage;
     }
+    @Basic
+    @Column(name = "creat_time")
+    public String getCreatTime() {
+        return creatTime;
+    }
 
+    public void setCreatTime(String creatTime) {
+        this.creatTime = creatTime;
+    }
+    @Basic
+    @Column(name = "end_time")
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+    @Basic
+    @Column(name = "service_type")
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,12 +113,15 @@ public class CallCompanyMode {
                 Objects.equals(companyAddress, that.companyAddress) &&
                 Objects.equals(companyIndustry, that.companyIndustry) &&
                 Objects.equals(companyCorporation, that.companyCorporation) &&
+                Objects.equals(creatTime, that.creatTime) &&
+                Objects.equals(endTime, that.endTime) &&
+                Objects.equals(serviceType, that.serviceType) &&
                 Objects.equals(companyManage, that.companyManage);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, companyName, companyAddress, companyIndustry, companyCorporation, companyManage);
+        return Objects.hash(id, companyName, companyAddress, companyIndustry, companyCorporation, companyManage,endTime,creatTime,serviceType);
     }
 }

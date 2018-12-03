@@ -34,7 +34,16 @@ public class AppController {
         if (null!=login.get("company_name")){
             String state = String.valueOf(login.get("state"));
             if (!state.equals("0")) {
-            return new JsonReq(login);
+                long endTime = Long.parseLong(login.get("end_time"));
+                if (endTime<new Date().getTime()){
+                    return new JsonReq(201,"账户已过期");
+                }else {
+                    long day = (endTime - new Date().getTime())/(24*60*60*1000);
+                    Map<String,String> map = new HashMap<>(login);
+                    map.put("surplus",day+"");
+                    return new JsonReq(map);
+                }
+
             }else {
                 return new JsonReq(201,"账户已被冻结");
             }
