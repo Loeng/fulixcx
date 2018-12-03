@@ -7,6 +7,7 @@ import com.gys.fulixcx.request.StaffRequest;
 import com.gys.fulixcx.service.CallStaffService;
 import com.gys.fulixcx.util.GysAnnotation;
 import com.gys.fulixcx.util.JsonReq;
+import com.gys.fulixcx.util.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,6 +54,7 @@ public class StaffContoller {
         callStaffMode.setCompanyId(sessionMode.getCommodityid());
         callStaffMode.setCreatTime(String.valueOf(new Date().getTime()));
         callStaffMode.setState(1);
+        callStaffMode.setPassWord(MD5Util.StringToMd5(callStaffMode.getPassWord()));
         callStaffService.save(callStaffMode);
         return new JsonReq(200,"操作成功");
     }
