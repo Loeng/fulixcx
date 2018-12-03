@@ -132,4 +132,10 @@ public class AjaxController {
         return new JsonReq(customerList);
     }
 
+    @ResponseBody
+    @RequestMapping("/logOut")
+    public JsonReq logOut(HttpServletRequest request){
+        request.getSession().invalidate();
+        return new JsonReq(500,"success");
+    }
 }

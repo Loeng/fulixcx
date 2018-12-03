@@ -6,12 +6,6 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://malsup.github.io/jquery.form.js"></script>
     <script type="text/javascript">
-        function lode(){
-            document.getElementById('divC').setAttribute("style","display")
-        }
-        function closelode(){
-            document.getElementById('divC').setAttribute("style","display:none")
-        }
         //ajax 方式上传文件操作
         $(document).ready(function(){
             $('#btn').click(function(){
@@ -24,15 +18,15 @@
                         error: errorMsg
                     });
                     function resutlMsg(msg){
-                        closelode();
+                        $("#divC").hide();
                         alert(msg);
                         $("#upfile").val("");
                     }
                     function kaishi() {
-                        lode();
+                        $("#divC").show();
                     }
                     function errorMsg(){
-                        closelode();
+                        $("#divC").hide();
                         alert("导入excel出错！");
                     }
                 }

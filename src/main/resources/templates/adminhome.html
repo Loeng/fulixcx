@@ -8,6 +8,23 @@
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="icon" href="/favicon.ico">
     <title>管理后台</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        function logOut() {
+            var flag = window.confirm("您确定要退出系统吗");
+           if(flag){
+               $.ajax({
+                   url: '/admin/logOut',
+                   dataType:'json',
+                   success:function (dt) {
+                       if(dt.code = 200){
+                          window.location.href = "/";
+                       }
+                   }
+               });
+           }
+        }
+    </script>
 </head>
 <body class="layui-layout-body">
     <div class="layui-layout layui-layout-admin">
@@ -24,7 +41,7 @@
                     <a href="javascript:;">成都云拓客科技有限公司</a>
                     <dl class="layui-nav-child">
                         <dd><a href="">帮助中心</a></dd>
-                        <dd><a href="login.html">退出</a></dd>
+                        <dd><a href="javascript:void(0);" onclick="logOut();">退出</a></dd>
                     </dl>
                 </li>
             </ul>
