@@ -35,8 +35,8 @@ public interface CallCompanyPhoneDao extends CrudRepository<CallCompanyPhoneMode
     @Query(nativeQuery = true, value = "SELECT " +
             "T.*,P.phone_number,P.carrieroperator,P.attribution " +
             "FROM call_company_phone T,call_phone P WHERE " +
-            "T.task_id = ?1 AND T.phone_id = P.id")
-    List<Map<String,String>> findTaskPhone(int taskId);
+            "T.task_id = ?1 AND T.phone_id = P.id LIMIT ?2,20")
+    List<Map<String,String>> findTaskPhone(int taskId,int index);
 
     /*
 
