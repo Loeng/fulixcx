@@ -31,10 +31,4 @@ public class CustomerContoller {
         customerRequest.setCompanyId(comId.getCommodityid());
         return callCompanyPhoneService.findList(customerRequest);
     }
-    @ResponseBody
-    @RequestMapping("/test")
-    public EasyUiVo test( CustomerRequest customerRequest){
-        customerRequest.setCompanyId(1);
-        return callCompanyPhoneService.findList(new CustomerRequest());
-    }
 }
