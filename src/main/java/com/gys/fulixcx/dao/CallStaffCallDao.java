@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface CallStaffCallDao extends CrudRepository<CallStaffCallMode, Integer> {
-    @Query(nativeQuery = true,value = "select * from call_staff_call where staff_id = ?1 order by dial_time desc limit 20")
+    @Query(nativeQuery = true,value = "select * from call_staff_call where staff_id = ?1 order by dial_time desc limit 40")
     List<CallStaffCallMode> findByStaffId(int staffid);
     CallStaffCallMode findById(int id);
     CallStaffCallMode findByStaffIdAndPhoneNumber(int staffid,String phone);

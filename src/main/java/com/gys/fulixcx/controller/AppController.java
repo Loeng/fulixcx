@@ -97,6 +97,11 @@ public class AppController {
         if (byStaffPhone != null){
             return new JsonReq(201,"账号已注册");
         }
+        String str = UrlReqUtil.get("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=" + phone);
+        String jsonStr = str.substring(str.indexOf("{") - 1, str.length());
+        if (jsonStr.length() < 50) {
+            return new JsonReq(201,"注册手机号不正确");
+        }
         CallCompanyMode companyMode = new CallCompanyMode();
         companyMode.setCompanyName(ComName);
         companyMode.setCompanyCorporation(corporation);
@@ -193,24 +198,36 @@ public class AppController {
         }
     }
     @GetMapping("/getCustomer")
-    public JsonReq getCustomer(int staffid){
-      List<Map<String, String>> taskPhone = callCompanyPhoneDao.findCustomer(staffid);
+    public JsonReq getCustomer(int staffid,String index){
+        int start=0;
+        int num = 100;
+        if (index!=null){
+            start = Integer.parseInt(index)*20;
+            num = 20;
+        }
+      List<Map<String, String>> taskPhone = callCompanyPhoneDao.findCustomer(staffid,start,num);
         return new JsonReq(taskPhone);
     }
     @GetMapping("/getCustomerScreen")
-    public JsonReq getCustomerScreen(int staffid,int Schedule,int Star,String Text){
-        System.out.println(staffid+"    "+Schedule+"    "+Star+"    "+Text);
+    public JsonReq getCustomerScreen(int staffid,int Schedule,int Star,String Text,String index){
+        //System.out.println(staffid+"    "+Schedule+"    "+Star+"    "+Text);
+        int start=0;
+        int num = 100;
+        if (index!=null){
+            start = Integer.parseInt(index)*20;
+            num = 20;
+        }
         List<Map<String, String>> taskPhone;
         if (Schedule == 0&&Star == 0&&Text.isEmpty()){
-            taskPhone = callCompanyPhoneDao.findCustomer(staffid);
+            taskPhone = callCompanyPhoneDao.findCustomer(staffid,start,num);
         }else if (Schedule == 0&&Star == 0){
-            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Text);
+            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Text,start,num);
         }else if(Schedule == 0){
-            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Star,Text);
+            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Star,Text,start,num);
         }else if(Star == 0){
-            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Schedule+"",Text);
+            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Schedule+"",Text,start,num);
         }else {
-            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Schedule+"",Star+"",Text);
+            taskPhone = callCompanyPhoneDao.findCustomerScreen(staffid,Schedule+"",Star+"",Text,start,num);
         }
 
         return new JsonReq(taskPhone);

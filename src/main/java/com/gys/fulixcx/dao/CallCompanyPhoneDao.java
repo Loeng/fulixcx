@@ -44,37 +44,42 @@ public interface CallCompanyPhoneDao extends CrudRepository<CallCompanyPhoneMode
     @Query(nativeQuery = true, value = "SELECT " +
             "T.*,P.phone_number,P.carrieroperator,P.attribution " +
             "FROM call_task C,call_company_phone T,call_phone P WHERE " +
-            "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND T.star > 0 and T.star < 4")
-    List<Map<String,String>> findCustomer(int staffId);
+            "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND " +
+            "T.star > 0 and T.star < 4 order by T.dial_time desc limit ?2,?3")
+    List<Map<String,String>> findCustomer(int staffId,int start,int num);
 
 
     @Query(nativeQuery = true, value = "SELECT " +
             "T.*,P.phone_number,P.carrieroperator,P.attribution " +
             "FROM call_task C,call_company_phone T,call_phone P WHERE " +
             "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND T.schedule = ?2 and T.star = ?3 and " +
-            "(T.company_name like concat('%',?4,'%') or P.phone_number like concat('%',?4,'%') or T.phone_name like concat('%',?4,'%'))" )
-    List<Map<String,String>> findCustomerScreen(int staffId,String schedule,String star,String like);
+            "(T.company_name like concat('%',?4,'%') or P.phone_number like " +
+            "concat('%',?4,'%') or T.phone_name like concat('%',?4,'%')) order by T.dial_time desc limit ?5,?6" )
+    List<Map<String,String>> findCustomerScreen(int staffId,String schedule,String star,String like,int start,int num);
 
     @Query(nativeQuery = true, value = "SELECT " +
             "T.*,P.phone_number,P.carrieroperator,P.attribution " +
             "FROM call_task C,call_company_phone T,call_phone P WHERE " +
             "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND T.schedule = ?2 and " +
-            "(T.company_name like concat('%',?3,'%') or P.phone_number like concat('%',?3,'%') or T.phone_name like concat('%',?3,'%'))" )
-    List<Map<String,String>> findCustomerScreen(int staffId,String schedule,String like);
+            "(T.company_name like concat('%',?3,'%') or P.phone_number like " +
+            "concat('%',?3,'%') or T.phone_name like concat('%',?3,'%')) order by T.dial_time desc limit ?4,?5" )
+    List<Map<String,String>> findCustomerScreen(int staffId,String schedule,String like,int start,int num);
 
     @Query(nativeQuery = true, value = "SELECT " +
             "T.*,P.phone_number,P.carrieroperator,P.attribution " +
             "FROM call_task C,call_company_phone T,call_phone P WHERE " +
             "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id AND T.star = ?2 and " +
-            "(T.company_name like concat('%',?3,'%') or P.phone_number like concat('%',?3,'%') or T.phone_name like concat('%',?3,'%'))" )
-    List<Map<String,String>> findCustomerScreen(int staffId,int star,String like);
+            "(T.company_name like concat('%',?3,'%') or P.phone_number like " +
+            "concat('%',?3,'%') or T.phone_name like concat('%',?3,'%')) order by T.dial_time desc limit ?4,?5" )
+    List<Map<String,String>> findCustomerScreen(int staffId,int star,String like,int start,int num);
 
     @Query(nativeQuery = true, value = "SELECT " +
             "T.*,P.phone_number,P.carrieroperator,P.attribution " +
             "FROM call_task C,call_company_phone T,call_phone P WHERE " +
             "C.staff_id = ?1 and C.id = T.task_id AND T.phone_id = P.id and " +
-            "(T.company_name like concat('%',?2,'%') or P.phone_number like concat('%',?2,'%') or T.phone_name like concat('%',?2,'%'))" )
-    List<Map<String,String>> findCustomerScreen(int staffId,String like);
+            "(T.company_name like concat('%',?2,'%') or P.phone_number like " +
+            "concat('%',?2,'%') or T.phone_name like concat('%',?2,'%')) order by T.dial_time desc limit ?3,?4" )
+    List<Map<String,String>> findCustomerScreen(int staffId,String like,int start,int num);
 
 
     @Query(nativeQuery = true,value = "select count(*) from call_company_phone where company_id = ?1 and task_id = 0")
