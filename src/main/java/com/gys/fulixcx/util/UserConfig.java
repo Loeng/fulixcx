@@ -1,32 +1,37 @@
 package com.gys.fulixcx.util;
 
-import org.springframework.context.annotation.Bean;
+import org.json.JSONObject;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
 
 @Component
 public class UserConfig extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //System.out.println(handler.getClass());
-        if(!isGysAnnoation(handler)){
-            if (request.getSession().getAttribute("sessionMode")!=null){
+        if (!isGysAnnoation(handler)) {
+            if (request.getSession().getAttribute("sessionMode") != null) {
                 return true;
-            }else {
+            } else {
                 String requestType = request.getHeader("X-Requested-With");
-                if("XMLHttpRequest".equals(requestType)){
-                    System.out.println("AJAX请求..");
-                }else{
-                    System.out.println("非AJAX请求..");
+                if ("XMLHttpRequest".equals(requestType)) {
+                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType("text/html; charset=utf-8");
+                    PrintWriter writer = response.getWriter();
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("code", 500);
+                    jsonObject.put("msg", "请登录");
+                    writer.write(jsonObject.toString());
+                } else {
+                    request.getRequestDispatcher("/").forward(request, response);
                     //此时requestType为null
                 }
-                response.sendRedirect(request.getContextPath()+"");
                 return false;
             }
         }
@@ -34,11 +39,15 @@ public class UserConfig extends HandlerInterceptorAdapter {
     }
 
     private boolean isGysAnnoation(Object handler) {
-        HandlerMethod handlerMethod = (HandlerMethod)handler;
-        Object bean = handlerMethod.getBean();
-        if(bean.getClass().isAnnotationPresent(GysAnnotation.class)){
+        try {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Object bean = handlerMethod.getBean();
+            if (bean.getClass().isAnnotationPresent(GysAnnotation.class)) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        return true;
     }
 }
