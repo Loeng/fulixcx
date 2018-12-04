@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>类别列表</title>
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+    <script type="text/javascript" src="../static/easyui/jquery.min.js" th:src="@{/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"
+            th:src="@{/easyui/jquery.easyui.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="@{/easyui/locale/easyui-lang-zh_CN.js}"></script>
+
+    <script type="text/javascript" th:inline="none">
+        $(function () {
+            $('#dg').datagrid({
+                url: '/category/page',
+                columns: [[
+                    {
+                        field: 'categoryName', title: '类别名称',
+                        width: $(this).width() *0.30,
+                        align: 'center',
+                    },
+                    {
+                        field: 'illustrate', title: '说明',
+                        width: $(this).width() * 0.3,
+                        align: 'center'
+                    },
+                    {
+                        field: 'id',
+                        title: '操作',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            return '<a href="javascirpt:void(0);" onclick="updateCate(' + index + ')">修改</a>'
+                                +'&nbsp;&nbsp;<a href="javascirpt:void(0);" onclick="deleteCate(' + value + ')">删除</a>';
+                        },
+                        width: $(this).width() * 0.4,
+                    }
+                ]],
+                toolbar: [{
+                    iconCls: 'icon-add',
+                    text: "新增分类",
+                    handler: function () {
+                        clearForm();
+                        $("#cateId").val('-1');
+                        $("#standardWindow").window('open');
+                    }
+                }],
+                width: $(window).width() - 10,
+                height: $(window).height() - 200,
+                // fitColumns: true,
+                pagination: true,
+                loadMsg: '加载中...',
+                pageSize: 20,
+                pageList: [20, 50, 100, 200]
+            });
+            // $("#box").datagrid('resize');
+        });
+        function deleteCate(id) {
+            $.messager.confirm("操作提示", "您确定要删除用选中记录吗？", function (flag) {
+              if(flag){
+                  $.ajax({
+                      url: '/category/delete/' + id,
+                      method: 'DELETE',
+                      dataType: 'json',
+                      success: function (_dt) {
+
+                          if (_dt.code == 200) {
+                              $.messager.show({
+                                  msg:_dt.msg,
+                                  timeout:500,
+                                  showType:'slide',
+                                  style:{
+                                      right:'',
+                                      top:document.body.scrollTop+document.documentElement.scrollTop,
+                                      bottom:''
+                                  }
+                              });
+                              $("#dg").datagrid('reload');
+                          }
+                      },
+                      error: function (_dt) {
+                          $.messager.alert("提示", "操作失败！");
+                      }
+                  });
+              }
+            });
+        }
+        function updateCate(index) {
+            var rows = $("#dg").datagrid("getRows");
+            var row = rows[index];//index为行号
+            console.log(row);
+            debugger;
+            $("#categoryName").textbox('setValue',row.categoryName);
+            $("#illustrate").textbox('setValue',row.illustrate);
+            $("#cateId").val(row.id);
+            $("#standardWindow").window('open');
+        }
+
+        function submitForm() {
+            var params = {};
+            var t = $('#searchForm').serializeArray();
+            $.each(t, function () {
+                params[this.name] = this.value;
+            });
+            $('#dg').datagrid({
+                queryParams: params
+            });
+        }
+        function doAdd(){
+            $('#ff').form('submit', {
+                    url:'/category/add',
+                onSubmit: function(){
+                // do some check
+                // return false to prevent submit;
+            },
+            success:function(_dt){
+                var obj = eval('('+_dt+')');
+                $.messager.show({
+                    msg:obj.msg,
+                    timeout:500,
+                    showType:'slide',
+                    style:{
+                        right:'',
+                        top:document.body.scrollTop+document.documentElement.scrollTop,
+                        bottom:''
+                    }
+                });
+                if(obj.code == 200){
+                    $("#standardWindow").window('close')
+                    $("#dg").datagrid('reload');
+                }
+            }
+        });
+        }
+        function clearForm(){
+            $('#ff').form('clear');
+        }
+    </script>
+</head>
+<body>
+<div class="easyui-panel" data-options="iconCls:'icon-search'" title="检索栏" style="width:100%;padding:30px 60px;">
+    <form id="searchForm" method="post">
+        <input class="easyui-textbox" name="categoryName" style="width:300px;padding-left: 20px;"
+               data-options="label:'类别名称:'">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()"
+           style="width:80px;padding-left: 30px;text-align:center;padding:5px 0">查询</a>
+    </form>
+</div>
+    <table id="dg"></table>
+<div class="easyui-window" title="添加类别" id="standardWindow" collapsible="false" minimizable="false" maximizable="false"
+     modal="true" closed="true" style="width:380px;height: 240px;">
+    <div class="easyui-panel" style="width:100%;max-width:400px;padding:30px 60px;">
+        <form id="ff" method="post">
+            <input id="cateId" type="hidden" name="id"/>
+            <div style="margin-bottom:20px">
+                <input id="categoryName" class="easyui-textbox" name="categoryName" style="width:100%"
+                       data-options="label:'类别名称:',required:true">
+            </div>
+            <div style="margin-bottom:20px">
+                <input id="illustrate" class="easyui-textbox" name="illustrate" style="width:100%"
+                       data-options="label:'说明:',required:true,validType:'telephone'">
+            </div>
+        </form>
+        <div style="text-align:center;padding:5px 0">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="doAdd()" style="width:80px">提交</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" style="width:80px">重置</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
