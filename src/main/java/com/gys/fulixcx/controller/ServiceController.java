@@ -52,7 +52,10 @@ public class ServiceController {
         return "customer_list";
     }
     @RequestMapping(value = "/home",method = {RequestMethod.GET})
-    public String Home(HttpServletRequest request){
+    public String Home(HttpServletRequest request,Model model){
+        SessionMode comId = (SessionMode) request.getSession().getAttribute("sessionMode");
+        CallCompanyMode byid = callCompanyDao.findByid(comId.getCommodityid());
+        model.addAttribute("ComName",byid.getCompanyName());
         return "adminhome";
     }
     @Autowired
