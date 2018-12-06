@@ -14,6 +14,7 @@ public class CallPhoneMode {
     private String carrieroperator;
     private String attribution;
     private String upDate;
+    private String companyName;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +36,15 @@ public class CallPhoneMode {
         this.phoneNumber = phoneNumber;
     }
     @Basic
+    @Column(name = "company_name")
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+    @Basic
     @Column(name = "up_date")
     public String getUpDate() {
         return upDate;
@@ -43,7 +53,6 @@ public class CallPhoneMode {
     public void setUpDate(String upDate) {
         this.upDate = upDate;
     }
-
     @Basic
     @Column(name = "phone_name")
     public String getPhoneName() {

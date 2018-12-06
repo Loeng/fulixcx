@@ -46,13 +46,13 @@ public class TaskController {
 
     @PostMapping("/add")
     @ResponseBody
-    public JsonReq addTask(CallTaskMode callTaskMode,HttpServletRequest request){
+    public JsonReq addTask(CallTaskMode callTaskMode,HttpServletRequest request,int categoryId){
         SessionMode sessionMode = (SessionMode) request.getSession().getAttribute("sessionMode");
         callTaskMode.setCompanyId(sessionMode.getCommodityid());
         callTaskMode.setIssuerId(sessionMode.getStaffid());
         callTaskMode.setLssuerTime(String.valueOf(new Date().getTime()));
         String asignNum = request.getParameter("asignNum");
-        return taskService.distrTask(callTaskMode,Integer.valueOf(asignNum));
+        return taskService.distrTask(callTaskMode,Integer.valueOf(asignNum),categoryId);
     }
 
     @PostMapping("/release/{id}")

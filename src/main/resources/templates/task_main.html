@@ -176,7 +176,7 @@
     <table id="dg"></table>
 </div>
 <div class="easyui-window" title="发布任务" id="standardWindow" collapsible="false" minimizable="false" maximizable="false"
-     modal="true" closed="true" style="width:390px;height: 330px;">
+     modal="true" closed="true" style="width:390px;height: 380px;">
     <div class="easyui-panel" style="width:100%;max-width:400px;padding:30px 60px;">
         <form id="ff" method="post">
             <div style="margin-bottom:20px">
@@ -188,9 +188,15 @@
                        data-options="label:'备注:',required:true">
             </div>
             <div style="margin-bottom:20px">
-                <select class="easyui-combobox" name="staffId" label="分配员工" style="width:100%"
+                <select class="easyui-combobox" name="staffId" label="分配员工" style="width:100%" editable="false"
                         data-options="panelHeight:'auto',url:'/task/getStaff',valueField: 'id',
 					textField: 'staffName'">
+                </select>
+            </div>
+            <div style="margin-bottom:20px">
+                <select class="easyui-combobox" name="categoryId" label="资源类别" style="width:100%" editable="false"
+                        data-options="panelHeight:'auto',url:'/category/list',valueField: 'id',
+					textField: 'categoryName'">
                 </select>
             </div>
             <div style="margin-bottom:20px">

@@ -42,9 +42,9 @@ public class AjaxController {
         mode.setStaffId(staff);
         mode.setTaskName(name);
         CallTaskMode save = callTaskDao.save(mode);
-        int i = callCompanyPhoneDao.setTask(save.getId(), comId.getCommodityid(), distr_number);
-        System.out.println("修改条数："+i);
-        return new JsonReq("分配任务成功"+i);
+        //int i = callCompanyPhoneDao.setTask(save.getId(), comId.getCommodityid(), distr_number);
+        System.out.println("修改条数：");
+        return new JsonReq("分配任务成功");
     }
     @Autowired
     CallCompanyDao callCompanyDao;

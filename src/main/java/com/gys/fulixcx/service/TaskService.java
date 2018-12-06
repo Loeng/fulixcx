@@ -14,7 +14,7 @@ public interface TaskService {
 
     List<Map<String,Object>> findStaff(int commodityid);
 
-    JsonReq distrTask(CallTaskMode callTaskMode, Integer integer);
+    JsonReq distrTask(CallTaskMode callTaskMode, Integer integer,Integer categoryId);
 
     boolean releaseTask(Integer id);
 }

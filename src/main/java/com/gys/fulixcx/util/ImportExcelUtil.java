@@ -38,9 +38,45 @@ public class ImportExcelUtil {
         Row row = null;
         Cell cell = null;
 
+        sheet = work.getSheetAt(0);
         list = new ArrayList<List<Object>>();
+        //遍历当前sheet中的所有行
+        int i = 0;
+        for (int j = 1; j < sheet.getLastRowNum(); j++) {
+            row = sheet.getRow(j);
+            if(row==null||row.getFirstCellNum()==j){
+                i++;
+                if (i==3){
+                    break;
+                }else {
+                    continue;
+                }
+            }
+            if (this.getCellValue(row.getCell(0))==null||this.getCellValue(row.getCell(0)).equals("")){
+                i++;
+                if (i==3){
+                    break;
+                }else {
+                    continue;
+                }
+
+            }else {
+                i = 0;
+            }
+            //遍历所有的列
+            List<Object> li = new ArrayList<Object>();
+            li.add(this.getCellValue(row.getCell(0)));
+            li.add(this.getCellValue(row.getCell(1)));
+            li.add(this.getCellValue(row.getCell(2)));
+            li.add(this.getCellValue(row.getCell(3)));
+            list.add(li);
+        }
+
+
+
+
         //遍历Excel中所有的sheet
-        for (int i = 0; i < work.getNumberOfSheets(); i++) {
+        /*for (int i = 0; i < work.getNumberOfSheets(); i++) {
             sheet = work.getSheetAt(i);
             if(sheet==null){continue;}
 
@@ -57,7 +93,7 @@ public class ImportExcelUtil {
                 }
                 list.add(li);
             }
-        }
+        }*/
         work.close();
         return list;
     }

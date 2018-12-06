@@ -91,9 +91,9 @@ public interface CallCompanyPhoneDao extends CrudRepository<CallCompanyPhoneMode
 
     @Modifying
     @Query(nativeQuery = true,value = "UPDATE call_company_phone t SET t.task_id = ?1 WHERE " +
-            "EXISTS (SELECT 1 FROM (SELECT id FROM call_company_phone s WHERE s.task_id = 0 AND s.company_id = ?2 LIMIT ?3) tmp WHERE " +
+            "EXISTS (SELECT 1 FROM (SELECT id FROM call_company_phone s WHERE s.task_id = 0 AND s.company_id = ?2 AND s.category_id = ?4 LIMIT ?3) tmp WHERE " +
             "tmp.id = t.id)")
-    int setTask(int taskId,int comId,int num);
+    int setTask(int taskId,int comId,int num,int categoryId);
 
 
     @Query(nativeQuery = true, value = "SELECT * from call_company_phone where company_id = ?1 task_id = 0 limit ?2")
@@ -105,5 +105,5 @@ public interface CallCompanyPhoneDao extends CrudRepository<CallCompanyPhoneMode
             "dial_type >0 and dial_time > ?1 and dial_time <?2 AND company_id = ?3")
     Map<String,String> findSum(String starttime,String endtime,int comId);
 
-    int countAllByTaskIdAndCompanyId(int taskId,int companyId);
+    int countAllByTaskIdAndCompanyIdAndCategoryId(int taskId,int companyId,int categoryId);
 }

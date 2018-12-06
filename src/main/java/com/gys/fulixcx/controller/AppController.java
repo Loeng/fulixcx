@@ -115,11 +115,11 @@ public class AppController {
         if (byStaffPhone != null){
             return new JsonReq(201,"账号已注册");
         }
-        String str = UrlReqUtil.get("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=" + phone);
+        /*String str = UrlReqUtil.get("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=" + phone);
         String jsonStr = str.substring(str.indexOf("{") - 1, str.length());
         if (jsonStr.length() < 50) {
             return new JsonReq(201,"注册手机号不正确");
-        }
+        }*/
         CallCompanyMode companyMode = new CallCompanyMode();
         companyMode.setCompanyName(ComName);
         companyMode.setCompanyCorporation("");

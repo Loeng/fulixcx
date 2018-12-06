@@ -41,13 +41,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public JsonReq distrTask(CallTaskMode callTaskMode, Integer distr_number) {
-        int total = callCompanyPhoneDao.countAllByTaskIdAndCompanyId(0, callTaskMode.getCompanyId());
+    public JsonReq distrTask(CallTaskMode callTaskMode, Integer distr_number,Integer categoryId) {
+        int total = callCompanyPhoneDao.countAllByTaskIdAndCompanyIdAndCategoryId(0, callTaskMode.getCompanyId(),categoryId);
         if(total < distr_number){
-            return new JsonReq(500,"分配失败，最后可分配"+total+"条数据");
+            return new JsonReq(500,"分配失败，最大可分配"+total+"条数据");
         }
         CallTaskMode save = callTaskDao.save(callTaskMode);
-        callCompanyPhoneDao.setTask(save.getId(), save.getCompanyId(), distr_number);
+        callCompanyPhoneDao.setTask(save.getId(), save.getCompanyId(), distr_number,categoryId);
         return new JsonReq(200,"分配成功");
     }
 

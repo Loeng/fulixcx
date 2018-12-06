@@ -82,7 +82,7 @@ public class UploadExcelControl {
      */
     @ResponseBody
     @RequestMapping(value = "ajaxUpload.do", method = {RequestMethod.GET, RequestMethod.POST})
-    public JsonReq ajaxUploadExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public JsonReq ajaxUploadExcel(HttpServletRequest request, HttpServletResponse response,int categoryId) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         System.out.println("通过 jquery.form.js 提供的ajax方式上传文件！");
 
@@ -118,11 +118,14 @@ public class UploadExcelControl {
                 }).start();
 
             }
+            countDownLatch.await();
+        }else {
+
         }
-        /*for (int i = 0; i < listob.size(); i++) {
+        for (int i = 0; i < listob.size(); i++) {
             execute(listob, list, i);
-        }*/
-        countDownLatch.await();
+        }
+
         Iterable<CallPhoneMode> callPhoneModes = callPhoneDao.saveAll(list);
         for (CallPhoneMode mode : callPhoneModes) {
             CallCompanyPhoneMode phoneMode = callCompanyPhoneDao.findByCompanyIdAndPhoneId(comId.getCommodityid(), mode.getId());
@@ -131,6 +134,7 @@ public class UploadExcelControl {
                 phoneMode.setCompanyId(comId.getCommodityid());
                 phoneMode.setPhoneId(mode.getId());
                 phoneMode.setRemarks(mode.getRemarks());
+                phoneMode.setCompanyName(mode.getCompanyName());
                 phoneMode.setPhoneName(mode.getPhoneName());
                 phoneMode.setUpTime("" + new Date().getTime());
                 phoneMode.setStaffId(comId.getStaffid());
@@ -139,6 +143,7 @@ public class UploadExcelControl {
                 phoneMode.setSchedule(0);
                 phoneMode.setConverseTime(0);
                 phoneMode.setTaskId(0);
+                phoneMode.setCategoryId(categoryId);
                 list1.add(phoneMode);
 
             } else {
@@ -158,7 +163,8 @@ public class UploadExcelControl {
         CallPhoneMode vo = new CallPhoneMode();
         vo.setPhoneNumber(String.valueOf(lo.get(0)));
         vo.setPhoneName(String.valueOf(lo.get(1)));
-        vo.setRemarks(String.valueOf(lo.get(2)));
+        vo.setCompanyName(String.valueOf(lo.get(2)));
+        vo.setRemarks(String.valueOf(lo.get(3)));
         CallPhoneMode byPhoneNumber = callPhoneDao.findByPhoneNumber(vo.getPhoneNumber());
         if (byPhoneNumber == null) {
             String str = UrlReqUtil.get("https://tcc.taobao.com/cc/json/mobile_tel_segment.htm?tel=" + vo.getPhoneNumber());
