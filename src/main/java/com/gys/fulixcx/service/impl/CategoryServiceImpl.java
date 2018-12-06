@@ -62,4 +62,9 @@ public class CategoryServiceImpl implements CategoryService {
     public void add(CallCategoryMode callCategoryMode) {
         callCategoryDao.saveAndFlush(callCategoryMode);
     }
+
+    @Override
+    public List<CallCategoryMode> findAllByCompanyId(int commodityid) {
+        return callCategoryDao.findAllByCompanyId(commodityid);
+    }
 }

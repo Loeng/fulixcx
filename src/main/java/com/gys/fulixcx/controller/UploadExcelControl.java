@@ -14,6 +14,7 @@ import com.gys.fulixcx.dao.CallPhoneDao;
 import com.gys.fulixcx.mode.*;
 import com.gys.fulixcx.util.GysAnnotation;
 import com.gys.fulixcx.util.ImportExcelUtil;
+import com.gys.fulixcx.util.JsonReq;
 import com.gys.fulixcx.util.UrlReqUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,9 +82,8 @@ public class UploadExcelControl {
      */
     @ResponseBody
     @RequestMapping(value = "ajaxUpload.do", method = {RequestMethod.GET, RequestMethod.POST})
-    public void ajaxUploadExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public JsonReq ajaxUploadExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-
         System.out.println("通过 jquery.form.js 提供的ajax方式上传文件！");
 
         InputStream in = null;
@@ -146,13 +146,11 @@ public class UploadExcelControl {
             }
         }
         callCompanyPhoneDao.saveAll(list1);
-        System.out.println("cost time：" + (System.currentTimeMillis() - start));
-        PrintWriter out = null;
-        response.setCharacterEncoding("utf-8");  //防止ajax接受到的中文信息乱码
-        out = response.getWriter();
-        out.print("文件导入成功！");
-        out.flush();
-        out.close();
+        Map<String,Integer> map = new HashMap<>();
+        map.put("success",list1.size());
+        map.put("failure",listob1.size()-list1.size());
+        JsonReq jsonReq = new JsonReq(200,"导入成功",map);
+        return jsonReq;
     }
 
     private void execute(List<List<Object>> listob, List<CallPhoneMode> list, int i) throws JSONException {

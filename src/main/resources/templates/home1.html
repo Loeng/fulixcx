@@ -71,21 +71,71 @@
                         },
                         width: $(this).width() * 0.1
                     },
-                    {field: 'upTime', title: '修改时间', width: $(this).width() * 0.1,
-                    formatter: function (value, row, index) {
-                        var date = new Date();
-                        date.setMilliseconds(value);
-                        return date.format("yyyy-MM-dd hh:mm:ss");
-                    }}
+                    {
+                        field: 'upTime', title: '修改时间', width: $(this).width() * 0.1,
+                        formatter: function (value, row, index) {
+                            var date = new Date();
+                            date.setMilliseconds(value);
+                            return date.format("yyyy-MM-dd hh:mm:ss");
+                        }
+                    }
                 ]],
                 width: $(window).width() - 10,
                 // fitColumns: true,
                 pagination: true,
                 loadMsg: '加载中...',
                 pageSize: 20,
-                pageList: [20, 50, 100, 200]
+                pageList: [20, 50, 100, 200],
+                toolbar: [{
+                    iconCls: 'icon-excel',
+                    text: "上传资源",
+                    handler: function () {
+                        $("#standardWindow").window('open');
+                    }
+                }],
+            });
+            $('#btn').bind('click', function () {
+                $('#uploadForm').form('submit', {
+                    url: '/uploadExcel/ajaxUpload.do',
+                    onSubmit: function () {
+                        return checkData();
+                    },
+                    success: function (_dt) {
+                        var obj = eval('(' + _dt + ')');
+                        $.messager.alert("提示", "<div style='text-align: center'><p style='color: green;margin-top: 30px;'>成功:" + obj.data.success + "</p>" +
+                            "<p style='color: red;margin-top: 30px;'>失败:" + obj.data.failure + "</p></div>")
+                        if (obj.code == 200) {
+                            $.messager.progress('close');
+                            $("#standardWindow").window('close');
+                            $("#dg").datagrid('reload');
+                        }
+                    }
+                });
             });
         });
+
+        function checkData() {
+            var fileDir = $("#upfile").filebox('getValue');
+            var suffix = fileDir.substr(fileDir.lastIndexOf("."));
+            if ("" == fileDir) {
+                $.messager.alert("提示", "请选择需要导入的Excel文件！");
+                return false;
+            }
+            if (".xls" != suffix && ".xlsx" != suffix) {
+                $.messager.alert("提示", "文档格式错误，请选择Excel格式的文件导入！");
+                return false;
+            }
+            if(!$("#uploadForm").form('validate')){
+                $("#categoryId").focus();
+                return false;
+            }
+            $.messager.progress({
+                title: '提示',
+                msg: '文件上传中，请稍候……',
+                text: ''
+            });
+            return true;
+        }
 
         function submitForm() {
             var params = {};
@@ -119,5 +169,36 @@
     </form>
 </div>
 <table id="dg"></table>
+<div class="easyui-window" title="上传资源" id="standardWindow" collapsible="false" minimizable="false" maximizable="false"
+     modal="true" closed="true" style="width:390px;height: 420px;">
+    <div class="easyui-panel" data-options="fit:true" style="padding:30px 60px;">
+        <form class="easyui-form" method="POST" enctype="multipart/form-data" id="uploadForm"
+              action="../uploadExcel/upload.do">
+            <div style="margin-bottom:20px">
+                <select id="categoryId" data-options="panelHeight:'auto',url:'/category/list',method:'post',valueField: 'id',
+					textField: 'categoryName',required:true,prompt:'请选择类别'" label="类别:"  labelPosition="top"  class="easyui-combobox"
+                        name="categoryId"
+                        style="width:255px;">
+                </select>
+            </div>
+            <div style="margin-bottom:20px">
+                <input id="upfile" name="upfile" class="easyui-filebox" data-options="prompt:'请选择文件...',required:true,accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'"
+                       style="width:255px">
+            </div>
+            <a style="width:120px" href="http://www.mchomes.cn/zymb.xlsx" download="资源模板.xlsx">点击下载模板</a>
+        </form>
+        <div>
+            <a href="javascript:void(0)" id="btn" class="easyui-linkbutton" style="width:255px">上传</a>
+        </div>
+        <div style="margin-top: 40px;">
+            <label style="color: green">
+                注：当您上传数据时同意共享，您的数据将被提供他人使用，
+                同时您也将获得使用他人数据的资格。假设您上传100条
+                数据，有效数据为99条并同意共享，您将获得99条他人
+                数据的使用权。
+            </label>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>用户列表</title>
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../easyui/themes/icon.css">
+    <script type="text/javascript" src="../static/easyui/jquery.min.js" th:src="@{/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/jquery.easyui.min.js"
+            th:src="@{/easyui/jquery.easyui.min.js}"></script>
+    <script type="text/javascript" src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="@{/easyui/locale/easyui-lang-zh_CN.js}"></script>
+    <script type="text/javascript" th:inline="none">
+
+    </script>
+</head>
+<body>
+<div class="easyui-panel" title="资源上传" style="width:100%;max-width:400px;padding:30px 60px;">
+    <div style="margin-bottom:20px">
+        <input class="easyui-textbox" label="Name:" labelPosition="top" style="width:100%">
+    </div>
+    <div style="margin-bottom:40px">
+        <input class="easyui-filebox" label="File2:" labelPosition="top" data-options="prompt:'Choose another file...'" style="width:100%">
+    </div>
+    <div>
+        <a href="#" class="easyui-linkbutton" style="width:100%">上传</a>
+    </div>
+</div>
+</body>
+</html>

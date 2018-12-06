@@ -11,7 +11,7 @@ public class JsonReq {
     public String msg;
     public String time;
     public Object data;
-
+    public JsonReq(){}
     public JsonReq(int code, String msg) {
         this.code = code;
         this.msg = msg;
@@ -48,5 +48,37 @@ public class JsonReq {
         this.msg = msg;
         this.data = data;
         this.time = DateUtil.dataTostr(new Date());
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 }

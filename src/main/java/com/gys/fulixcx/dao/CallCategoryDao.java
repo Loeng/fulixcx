@@ -14,4 +14,5 @@ public interface CallCategoryDao extends JpaRepository<CallCategoryMode, Integer
     List<CallCategoryMode> findByCompanyId(int companyId);
     CallCategoryMode findById(int id);
 
+    List<CallCategoryMode> findAllByCompanyId(int commodityid);
 }

@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.jws.Oneway;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @GysAnnotation
-@RequestMapping("category")
+@RequestMapping("/category")
 public class CategoryController {
 
     @Autowired
@@ -62,5 +63,11 @@ public class CategoryController {
             e.printStackTrace();
         }
         return new JsonReq(500,"操作失败");
+    }
+    @PostMapping("/list")
+    @ResponseBody
+    public List<CallCategoryMode> list(HttpServletRequest request){
+        SessionMode sessionMode = (SessionMode)request.getSession().getAttribute("sessionMode");
+        return categoryService.findAllByCompanyId(sessionMode.getCommodityid());
     }
 }
